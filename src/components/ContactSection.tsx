@@ -2,6 +2,12 @@
 
 import { motion } from "motion/react";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { ChangeEvent, useActionState, useEffect, useState } from "react";
+import {
+  ContactFormData,
+  ContactFormResponeType,
+  validateContactForm,
+} from "@/features/leads/contact-service";
 
 export function ContactSection() {
   const contactInfo = [
@@ -26,6 +32,40 @@ export function ContactSection() {
       details: ["sales@prymage.com", "info@prymage.com"],
     },
   ];
+
+  const [formData, setFormData] = useState<ContactFormData>({
+    name: "",
+    email: "",
+    company: "",
+    phone: "",
+    interest: "",
+    country: "",
+    message: "",
+  });
+
+  const handleChange = (
+    e:
+      | ChangeEvent<HTMLInputElement>
+      | ChangeEvent<HTMLSelectElement>
+      | ChangeEvent<HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const initialState: ContactFormResponeType = {
+    success: false,
+    errors: {},
+    errorMessage: null,
+  };
+
+  const [state, formAction, isPending] = useActionState(
+    validateContactForm,
+    initialState,
+  );
+
+  useEffect(() => {}, []);
 
   return (
     <section
@@ -64,24 +104,45 @@ export function ContactSection() {
               <h3 className="text-2xl font-bold text-white mb-6">
                 Send us a message
               </h3>
-              <form className="space-y-6">
+              {state.errorMessage && (
+                <small className="text-red-500 text-xs">
+                  {state.errorMessage}
+                </small>
+              )}
+              <form className="space-y-6" action={formAction}>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-white mb-2">Full Name</label>
                     <input
                       type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-[#D4A24C] transition-colors"
                       placeholder="John Doe"
                     />
+                    {state.errors.name && (
+                      <small className="text-red-500 text-xs">
+                        {state.errors.name}
+                      </small>
+                    )}
                   </div>
                   <div>
                     <label className="block text-white mb-2">Email</label>
                     <input
                       type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-[#D4A24C] transition-colors"
                       placeholder="john@example.com"
                     />
                   </div>
+                  {state.errors.email && (
+                    <small className="text-red-500 text-xs">
+                      {state.errors.email}
+                    </small>
+                  )}
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
@@ -91,9 +152,17 @@ export function ContactSection() {
                     </label>
                     <input
                       type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-[#D4A24C] transition-colors"
                       placeholder="+233 000 000 000"
                     />
+                    {state.errors.phone && (
+                      <small className="text-red-500 text-xs">
+                        {state.errors.phone}
+                      </small>
+                    )}
                   </div>
                   <div>
                     <label className="block text-white mb-2">
@@ -101,16 +170,29 @@ export function ContactSection() {
                     </label>
                     <input
                       type="text"
+                      name="company"
+                      value={formData.company}
+                      onChange={handleChange}
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-[#D4A24C] transition-colors"
                       placeholder="Your Company"
                     />
+                    {state.errors.company && (
+                      <small className="text-red-500 text-xs">
+                        {state.errors.company}
+                      </small>
+                    )}
                   </div>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-white mb-2">Purpose</label>
-                    <select className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-[#D4A24C] transition-colors">
+                    <label className="block text-white mb-2">Interest</label>
+                    <select
+                      name="interest"
+                      value={formData.interest}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-[#D4A24C] transition-colors"
+                    >
                       <option value="" className="text-gray-900">
                         Select purpose
                       </option>
@@ -127,10 +209,20 @@ export function ContactSection() {
                         Training
                       </option>
                     </select>
+                    {state.errors.interest && (
+                      <small className="text-red-500 text-xs">
+                        {state.errors.interest}
+                      </small>
+                    )}
                   </div>
                   <div>
                     <label className="block text-white mb-2">Location</label>
-                    <select className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-[#D4A24C] transition-colors">
+                    <select
+                      name="country"
+                      value={formData.country}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-[#D4A24C] transition-colors"
+                    >
                       <option value="" className="text-gray-900">
                         Select location
                       </option>
@@ -144,6 +236,11 @@ export function ContactSection() {
                         Other
                       </option>
                     </select>
+                    {state.errors.country && (
+                      <small className="text-red-500 text-xs">
+                        {state.errors.country}
+                      </small>
+                    )}
                   </div>
                 </div>
 
@@ -151,16 +248,29 @@ export function ContactSection() {
                   <label className="block text-white mb-2">Message</label>
                   <textarea
                     rows={4}
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-[#D4A24C] transition-colors resize-none"
                     placeholder="Tell us about your requirements..."
                   ></textarea>
+                  {state.errors.message && (
+                    <small className="text-red-500 text-xs">
+                      {state.errors.message}
+                    </small>
+                  )}
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full px-8 py-4 bg-gradient-to-r from-[#D4A24C] to-yellow-500 text-white rounded-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                  aria-disabled={isPending}
+                  className={
+                    isPending
+                      ? " cursor-pointer-none"
+                      : "w-full px-8 py-4 bg-gradient-to-r from-[#D4A24C] to-yellow-500 text-white rounded-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                  }
                 >
-                  Send Message
+                  {isPending ? "..." : "Send Message"}
                 </button>
               </form>
             </div>
