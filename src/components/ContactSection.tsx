@@ -65,7 +65,10 @@ export function ContactSection() {
     initialState,
   );
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (state.success) {
+    }
+  }, []);
 
   return (
     <section
@@ -137,12 +140,12 @@ export function ContactSection() {
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-[#D4A24C] transition-colors"
                       placeholder="john@example.com"
                     />
+                    {state.errors.email && (
+                      <small className="text-red-500 text-xs">
+                        {state.errors.email}
+                      </small>
+                    )}
                   </div>
-                  {state.errors.email && (
-                    <small className="text-red-500 text-xs">
-                      {state.errors.email}
-                    </small>
-                  )}
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">

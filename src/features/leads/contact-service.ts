@@ -1,3 +1,5 @@
+"use server";
+
 import z from "zod";
 import { contactFormSchema } from "./contact-form-shcema";
 
@@ -20,7 +22,7 @@ export type ContactFormResponeType = {
 };
 
 export const validateContactForm = async (
-  prevState: ContactFormResponeType,
+  _prevState: ContactFormResponeType,
   formData: FormData,
 ): Promise<ContactFormResponeType> => {
   const rawInput = Object.fromEntries(formData);
