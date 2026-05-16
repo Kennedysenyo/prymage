@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { Mail } from "lucide-react";
+import Link from "next/link";
 
 export function Footer() {
   const quickLinks = [
@@ -77,12 +78,12 @@ export function Footer() {
             <ul className="space-y-2">
               {quickLinks.map((link, index) => (
                 <li key={index}>
-                  <a
+                  <Link
                     href={link.href}
                     className="text-gray-400 hover:text-[#D4A24C] transition-colors"
                   >
                     {link.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -98,12 +99,12 @@ export function Footer() {
             <ul className="space-y-2">
               {products.map((product, index) => (
                 <li key={index}>
-                  <a
+                  <Link
                     href="#products"
                     className="text-gray-400 hover:text-[#D4A24C] transition-colors"
                   >
                     {product}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -119,12 +120,12 @@ export function Footer() {
             <ul className="space-y-2">
               {services.map((service, index) => (
                 <li key={index}>
-                  <a
+                  <Link
                     href="#services"
                     className="text-gray-400 hover:text-[#D4A24C] transition-colors"
                   >
                     {service}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -150,14 +151,15 @@ export function Footer() {
               transition={{ delay: 0.5, duration: 0.6 }}
               className="flex gap-4"
             >
+              {/* TODO: Import icons from react-icons and uncomment the following */}
               {/* {[Facebook, Twitter, Linkedin, Instagram].map((Icon, index) => (
-                <a
+                <Link
                   key={index}
                   href="#"
                   className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-gradient-to-r hover:from-[#5B2CA5] hover:to-[#D4A24C] transition-all duration-300"
                 >
                   <Icon size={20} />
-                </a>
+                </Link>
               ))} */}
             </motion.div>
           </div>

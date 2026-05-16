@@ -1,10 +1,50 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import { ChangeEvent, useActionState, useEffect, useState } from "react";
+import {
+  SignInFormResponseType,
+  UserSignInDataType,
+} from "@/features/auth/auth.types";
+import { validateSignInForm } from "@/features/auth/auth.service";
+import { useRouter } from "next/navigation";
 
 export default function SignInPage() {
+  const [formData, setFormData] = useState<UserSignInDataType>({
+    email: "",
+    password: "",
+  });
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const router = useRouter();
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const initialState: SignInFormResponseType = {
+    success: false,
+    errorMessage: null,
+    errors: {},
+  };
+
+  const [state, formAction, isPending] = useActionState(
+    validateSignInForm,
+    initialState,
+  );
+
+  useEffect(() => {
+    if (state.success) {
+      setFormData({ email: "", password: "" });
+      router.replace("/admin/dashboard");
+    }
+  }, [state.success, router]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#181225] via-[#221A35] to-[#5B2CA5] flex items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute inset-0 opacity-10">
@@ -22,9 +62,12 @@ export default function SignInPage() {
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-white mb-2">Welcome Back</h1>
             <p className="text-gray-300">Sign in to access your account</p>
+            {state.errorMessage && (
+              <p className="text-red-400 text-xs">{state.errorMessage}</p>
+            )}
           </div>
 
-          <form className="space-y-6">
+          <form className="space-y-6" action={formAction}>
             <div>
               <label className="block text-white mb-2">Email Address</label>
               <div className="relative">
@@ -34,10 +77,16 @@ export default function SignInPage() {
                 />
                 <input
                   type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-[#D4A24C] transition-colors"
                   placeholder="you@example.com"
                 />
               </div>
+              {state.errors.email && (
+                <p className=" text-red-400 text-xs">{state.errors.email}</p>
+              )}
             </div>
 
             <div>
@@ -48,11 +97,26 @@ export default function SignInPage() {
                   size={20}
                 />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
                   className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-[#D4A24C] transition-colors"
                   placeholder="••••••••"
                 />
+
+                <button
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
               </div>
+              {state.errors.password && (
+                <small className="text-xs text-red-400">
+                  {state.errors.password}
+                </small>
+              )}
             </div>
 
             <div className="flex items-center justify-between">
@@ -73,6 +137,8 @@ export default function SignInPage() {
 
             <button
               type="submit"
+              aria-disabled={isPending}
+              style={{ cursor: isPending ? "none" : "pointer" }}
               className="w-full py-4 bg-gradient-to-r from-[#D4A24C] to-yellow-500 text-white rounded-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
             >
               Sign In
