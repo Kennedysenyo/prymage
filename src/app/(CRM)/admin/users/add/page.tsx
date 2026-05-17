@@ -10,6 +10,8 @@ import {
   CreateUserFormType,
 } from "@/features/users/users.types";
 import { validateCreateUserForm } from "@/features/users/users.service";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function AddUserPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,6 +23,8 @@ export default function AddUserPage() {
     password: "",
     cnfrmPassword: "",
   });
+
+  const router = useRouter();
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>,
@@ -50,8 +54,10 @@ export default function AddUserPage() {
         password: "",
         cnfrmPassword: "",
       });
+      toast.success("User created successfully!");
+      router.push("/admin/users");
     }
-  }, []);
+  }, [state.success, router]);
 
   return (
     <div className="max-w-3xl mx-auto">

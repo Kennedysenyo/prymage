@@ -1,13 +1,15 @@
 "use client";
 
 import { motion } from "motion/react";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Loader, Loader2 } from "lucide-react";
 import { ChangeEvent, useActionState, useEffect, useState } from "react";
 import {
-  ContactFormData,
-  ContactFormResponeType,
-  validateContactForm,
-} from "@/features/leads/contact-service";
+  CreateLeadsDataType,
+  CreateLeadsFormResponseType,
+} from "@/features/leads/leads.types";
+import { validateLeadsForm } from "@/features/leads/leads.service";
+import toast from "react-hot-toast";
+import { cn } from "@/lib/utils";
 
 export function ContactSection() {
   const contactInfo = [
@@ -33,7 +35,7 @@ export function ContactSection() {
     },
   ];
 
-  const [formData, setFormData] = useState<ContactFormData>({
+  const [formData, setFormData] = useState<CreateLeadsDataType>({
     name: "",
     email: "",
     company: "",
@@ -54,21 +56,31 @@ export function ContactSection() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const initialState: ContactFormResponeType = {
+  const initialState: CreateLeadsFormResponseType = {
     success: false,
     errors: {},
     errorMessage: null,
   };
 
   const [state, formAction, isPending] = useActionState(
-    validateContactForm,
+    validateLeadsForm,
     initialState,
   );
 
   useEffect(() => {
     if (state.success) {
+      setFormData({
+        name: "",
+        email: "",
+        company: "",
+        phone: "",
+        interest: "",
+        country: "",
+        message: "",
+      });
+      toast.success("Message send successfully!");
     }
-  }, []);
+  }, [state.success]);
 
   return (
     <section
@@ -219,7 +231,7 @@ export function ContactSection() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-white mb-2">Location</label>
+                    <label className="block text-white mb-2">Country</label>
                     <select
                       name="country"
                       value={formData.country}
@@ -227,7 +239,7 @@ export function ContactSection() {
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-[#D4A24C] transition-colors"
                     >
                       <option value="" className="text-gray-900">
-                        Select location
+                        Select country
                       </option>
                       <option value="ghana" className="text-gray-900">
                         Ghana
@@ -267,13 +279,16 @@ export function ContactSection() {
                 <button
                   type="submit"
                   aria-disabled={isPending}
-                  className={
-                    isPending
-                      ? " cursor-pointer-none"
-                      : "w-full px-8 py-4 bg-gradient-to-r from-[#D4A24C] to-yellow-500 text-white rounded-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
-                  }
+                  className={cn(
+                    "w-full px-8 py-4 bg-gradient-to-r from-[#D4A24C] to-yellow-500 text-white rounded-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 flex items-center justify-center",
+                    isPending && "pointer-events-none",
+                  )}
                 >
-                  {isPending ? "..." : "Send Message"}
+                  {isPending ? (
+                    <Loader2 size={18} className="animate-spin" />
+                  ) : (
+                    "Send Message"
+                  )}
                 </button>
               </form>
             </div>

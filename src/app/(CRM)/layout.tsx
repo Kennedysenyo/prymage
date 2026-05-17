@@ -4,6 +4,7 @@ import { DashboardNavbar } from "@/components/CRM/DashboardNavbar";
 import { Sidebar } from "@/components/CRM/Sidebar";
 import { usePathname } from "next/navigation";
 import { ReactNode, useState } from "react";
+import { Toaster } from "react-hot-toast";
 
 const pageTitles: Record<string, string> = {
   "/dashboard": "Dashboard Overview",
@@ -43,6 +44,7 @@ export default function CRMLayout({
           title={getPageTitle()}
         />
         {children}
+        <Toaster position="top-right" />
       </div>
     </div>
   );

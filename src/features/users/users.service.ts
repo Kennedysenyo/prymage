@@ -11,12 +11,16 @@ import { handleError } from "@/lib/utils";
 import { auth } from "@/lib/better-auth/auth";
 
 const createUser = async (
-  data: Omit<CreateUserFormType, "cnfrmPassword">,
+  userData: Omit<CreateUserFormType, "cnfrmPassword">,
 ): Promise<string | null> => {
   try {
-    await auth.api.createUser({
-      body: data,
+    const res = await auth.api.createUser({
+      body: {
+        ...userData,
+        data: { emailVerified: true },
+      },
     });
+
     return null;
   } catch (error) {
     return handleError(error);
@@ -43,7 +47,6 @@ export const validateCreateUserForm = async (
     return { success: false, errors, errorMessage: null };
   }
 
-  console.log(result.data);
   const errorMessage = await createUser(result.data);
 
   if (errorMessage) {
