@@ -15,7 +15,6 @@ export const auth = betterAuth({
     enabled: true,
   },
   plugins: [
-    nextCookies(),
     emailOTP({
       async sendVerificationOTP({ email, otp, type }) {
         if (type === "sign-in") {
@@ -37,5 +36,6 @@ export const auth = betterAuth({
       adminRoles: ["admin"],
       adminUserIds: ["d9U7TsMBzbAEgf8IB6vuR4ceL710C5LW"],
     }),
+    nextCookies(),
   ],
 });

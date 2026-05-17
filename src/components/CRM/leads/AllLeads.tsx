@@ -16,82 +16,17 @@ import {
 } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
+import { LeadsTable } from "@/features/leads/leads.types";
 
-interface Lead {
-  id: number;
-  name: string;
-  company: string;
-  email: string;
-  interest: string;
-  country: string;
-  stage: "new" | "contacted" | "qualified" | "won" | "lost";
-  assignedStaff: string;
-  createdDate: string;
+interface Props {
+  leads: LeadsTable[];
 }
 
-export function AllLeads() {
+export function AllLeads({ leads }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [stageFilter, setStageFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-
-  const leads: Lead[] = [
-    {
-      id: 1,
-      name: "Kwame Mensah",
-      company: "Accra Manufacturing Ltd",
-      email: "kwame@accramfg.com",
-      interest: "ERPNext",
-      country: "Ghana",
-      stage: "qualified",
-      assignedStaff: "John Doe",
-      createdDate: "2024-05-12",
-    },
-    {
-      id: 2,
-      name: "Fatima Ibrahim",
-      company: "Lagos Retail Group",
-      email: "fatima@lagosretail.ng",
-      interest: "Odoo",
-      country: "Nigeria",
-      stage: "contacted",
-      assignedStaff: "Jane Smith",
-      createdDate: "2024-05-14",
-    },
-    {
-      id: 3,
-      name: "Michael Osei",
-      company: "Ghana Commercial Bank",
-      email: "mosei@gcb.com.gh",
-      interest: "TallyPrime",
-      country: "Ghana",
-      stage: "new",
-      assignedStaff: "Mike Johnson",
-      createdDate: "2024-05-15",
-    },
-    {
-      id: 4,
-      name: "Chioma Nwankwo",
-      company: "Synlab Nigeria",
-      email: "chioma@synlab.ng",
-      interest: "QuickBooks",
-      country: "Nigeria",
-      stage: "won",
-      assignedStaff: "Sarah Wilson",
-      createdDate: "2024-05-10",
-    },
-    {
-      id: 5,
-      name: "Abena Asante",
-      company: "Regent University",
-      email: "aasante@regent.edu.gh",
-      interest: "Enquest ERP",
-      country: "Ghana",
-      stage: "qualified",
-      assignedStaff: "John Doe",
-      createdDate: "2024-05-13",
-    },
-  ];
 
   const getStageBadge = (stage: string) => {
     const badges = {
@@ -211,11 +146,9 @@ export function AllLeads() {
                       {lead.stage.charAt(0).toUpperCase() + lead.stage.slice(1)}
                     </span>
                   </td>
+                  <td className="px-6 py-4 text-gray-700">{lead.assignedTo}</td>
                   <td className="px-6 py-4 text-gray-700">
-                    {lead.assignedStaff}
-                  </td>
-                  <td className="px-6 py-4 text-gray-700">
-                    {lead.createdDate}
+                    {lead.createdAt.toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4">
                     <DropdownMenu.Root>
@@ -231,7 +164,7 @@ export function AllLeads() {
                         >
                           <DropdownMenu.Item asChild>
                             <Link
-                              href={`/dashboard/leads/${lead.id}`}
+                              href={`/admin/leads/${lead.id}/details`}
                               className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer outline-none"
                             >
                               <Eye size={16} />
@@ -239,8 +172,13 @@ export function AllLeads() {
                             </Link>
                           </DropdownMenu.Item>
                           <DropdownMenu.Item className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer outline-none">
-                            <Edit size={16} />
-                            Edit Lead
+                            <Link
+                              href={"/"}
+                              className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer outline-none"
+                            >
+                              <Edit size={16} />
+                              Edit Lead
+                            </Link>
                           </DropdownMenu.Item>
                           <DropdownMenu.Item className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer outline-none">
                             <UserPlus size={16} />
@@ -293,11 +231,11 @@ export function AllLeads() {
                 <span className="font-medium">Country:</span> {lead.country}
               </p>
               <p className="text-gray-600">
-                <span className="font-medium">Assigned:</span>{" "}
-                {lead.assignedStaff}
+                <span className="font-medium">Assigned:</span> {lead.assignedTo}
               </p>
               <p className="text-gray-600">
-                <span className="font-medium">Created:</span> {lead.createdDate}
+                <span className="font-medium">Created:</span>{" "}
+                {lead.createdAt.toLocaleDateString()}
               </p>
             </div>
             <Link

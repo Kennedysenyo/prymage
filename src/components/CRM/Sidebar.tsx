@@ -8,7 +8,6 @@ import {
   UserPlus,
   TrendingUp,
   Settings,
-  LogOut,
   X,
   Briefcase,
   FileText,
@@ -16,6 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LogOutButton } from "./LogOutButton";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -91,10 +91,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             </div>
           </div>
         </div>
-        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all duration-300">
-          <LogOut size={20} />
-          <span>Logout</span>
-        </button>
+        <LogOutButton />
       </div>
     </div>
   );

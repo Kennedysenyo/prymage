@@ -29,7 +29,7 @@ export const leads = pgTable(
     country: text("country").notNull(),
     message: text("message").notNull(),
     stage: leadStages("stage").notNull().default("new"),
-    assignTo: text("assignTo").references(() => authTables.user.id),
+    assignedTo: text("assignedTo").references(() => authTables.user.id),
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),
   },
@@ -50,7 +50,20 @@ export const leadNote = pgTable("lead_notes", {
     .references(() => authTables.user.id)
     .notNull(),
   note: text("note").notNull(),
-  createdAt: timestamp("createdAt").defaultNow(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const leadStageHistory = pgTable("lead_stage_history", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  leadId: uuid("leadId")
+    .notNull()
+    .references(() => leads.id),
+  changedBy: text("changedBy")
+    .notNull()
+    .references(() => authTables.user.id),
+  oldStage: text("oldStage").notNull(),
+  newStage: text("newStage").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
 export const authSchemas = { ...authTables };

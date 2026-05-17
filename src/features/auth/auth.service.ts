@@ -224,3 +224,12 @@ export const validateSetNewPasswordForm = async (
 
   return { success: true, errors: {}, errorMessage: null };
 };
+
+export const logOut = async (): Promise<string | null> => {
+  try {
+    await auth.api.signOut({ headers: await headers() });
+    return null;
+  } catch (error) {
+    return handleError(error);
+  }
+};

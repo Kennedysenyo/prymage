@@ -1,5 +1,5 @@
-import { leads } from "@/lib/db/schema";
-import { createInsertSchema } from "drizzle-zod";
+import { leadNote, leads } from "@/lib/db/schema";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import z from "zod";
 
 const dbLeadsSchema = createInsertSchema(leads);
@@ -35,5 +35,51 @@ export const createLeadsSchema = dbLeadsSchema
         iss.input?.length === 0
           ? "Enter message"
           : "Message must be at least 10 chars long.",
+    }),
+  });
+
+const dbSelectLeadsSchema = createSelectSchema(leads);
+
+export const selectAllLeadsTableSchema = dbSelectLeadsSchema.pick({
+  id: true,
+  name: true,
+  company: true,
+  email: true,
+  interest: true,
+  country: true,
+  stage: true,
+  assignedTo: true,
+  createdAt: true,
+});
+
+export const selectLeadDetailsSchema = dbSelectLeadsSchema.pick({
+  id: true,
+  name: true,
+  company: true,
+  email: true,
+  phone: true,
+  interest: true,
+  country: true,
+  stage: true,
+  assignedTo: true,
+  createdAt: true,
+});
+
+// =------------- Notes
+
+const dbCreateNoteSchema = createInsertSchema(leadNote);
+
+export const createNoteSchema = dbCreateNoteSchema
+  .pick({
+    leadId: true,
+    userId: true,
+    note: true,
+  })
+  .extend({
+    leadId: z.uuid(),
+    userId: z.string().min(1),
+    note: z.string().min(10, {
+      error: (iss) =>
+        iss.input?.length === 0 ? "Add note" : "Note must be >= 10 chars long.",
     }),
   });

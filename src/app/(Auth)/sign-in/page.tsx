@@ -109,6 +109,7 @@ export default function SignInPage() {
                 />
 
                 <button
+                  type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
                 >
