@@ -1,10 +1,36 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Mail, ArrowLeft } from "lucide-react";
+import { Mail, ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useActionState, useEffect, useState } from "react";
+import { ForgotPasswordFormResponseType } from "@/features/auth/auth.types";
+import { validateForgotPasswordForm } from "@/features/auth/auth.service";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function ForgotPasswordPage() {
+  const [input, setInput] = useState("");
+  const router = useRouter();
+
+  const initialState: ForgotPasswordFormResponseType = {
+    success: false,
+    errors: {},
+    errorMessage: null,
+  };
+  const [state, formAction, isPending] = useActionState(
+    validateForgotPasswordForm,
+    initialState,
+  );
+
+  useEffect(() => {
+    if (state.success) {
+      setInput("");
+      toast.success("OTP sent successfully!");
+      router.push("/verify-otp");
+    }
+  }, [state.success, router]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#181225] via-[#221A35] to-[#5B2CA5] flex items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute inset-0 opacity-10">
@@ -24,7 +50,7 @@ export default function ForgotPasswordPage() {
             className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-6 transition-colors"
           >
             <ArrowLeft size={20} />
-            <span>Back to Signin</span>
+            <span>Back to Sign in</span>
           </Link>
 
           <div className="text-center mb-8">
@@ -38,9 +64,12 @@ export default function ForgotPasswordPage() {
               No worries! Enter your email and we'll send you a verification
               code to reset your password.
             </p>
+            {state.errorMessage && (
+              <p className="text-red-400 text-xs mb-2">{state.errorMessage}</p>
+            )}
           </div>
 
-          <form className="space-y-6">
+          <form className="space-y-6" action={formAction}>
             <div>
               <label className="block text-white mb-2">Email Address</label>
               <div className="relative">
@@ -50,20 +79,28 @@ export default function ForgotPasswordPage() {
                 />
                 <input
                   type="email"
+                  name="email"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
                   className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-[#D4A24C] transition-colors"
                   placeholder="you@example.com"
                 />
               </div>
+              {state.errors.email && (
+                <p className="text-red-400 text-xs">{state.errors.email}</p>
+              )}
             </div>
 
-            <Link href="/verify-otp">
-              <button
-                type="button"
-                className="w-full py-4 bg-gradient-to-r from-[#D4A24C] to-yellow-500 text-white rounded-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
-              >
-                Send Verification Code
-              </button>
-            </Link>
+            <button
+              type="submit"
+              className="w-full py-4 bg-gradient-to-r from-[#D4A24C] to-yellow-500 text-white rounded-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+            >
+              {isPending ? (
+                <Loader2 size={18} className="animate-spin mx-auto" />
+              ) : (
+                "Send Verification Code"
+              )}
+            </button>
           </form>
 
           <div className="mt-8 text-center">

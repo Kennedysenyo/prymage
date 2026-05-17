@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { ChangeEvent, useActionState, useEffect, useState } from "react";
 import {
@@ -10,6 +10,8 @@ import {
 } from "@/features/auth/auth.types";
 import { validateSignInForm } from "@/features/auth/auth.service";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { cn } from "@/lib/utils";
 
 export default function SignInPage() {
   const [formData, setFormData] = useState<UserSignInDataType>({
@@ -41,6 +43,7 @@ export default function SignInPage() {
   useEffect(() => {
     if (state.success) {
       setFormData({ email: "", password: "" });
+      toast.success("Signed in successfully!");
       router.replace("/admin/dashboard");
     }
   }, [state.success, router]);
@@ -138,10 +141,16 @@ export default function SignInPage() {
             <button
               type="submit"
               aria-disabled={isPending}
-              style={{ cursor: isPending ? "none" : "pointer" }}
-              className="w-full py-4 bg-gradient-to-r from-[#D4A24C] to-yellow-500 text-white rounded-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+              className={cn(
+                "w-full py-4 bg-gradient-to-r from-[#D4A24C] to-yellow-500 text-white rounded-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 ",
+                isPending && "pointer-events-none",
+              )}
             >
-              Sign In
+              {isPending ? (
+                <Loader2 size={18} className="animate-spin mx-auto" />
+              ) : (
+                "Sign In"
+              )}
             </button>
           </form>
         </div>
