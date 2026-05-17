@@ -100,7 +100,7 @@ export default function UsersPage() {
           </div>
         </div>
 
-        <Link href="/dashboard/users/add">
+        <Link href="/admin/users/add">
           <button className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#5B2CA5] to-[#D4A24C] text-white rounded-xl hover:shadow-lg transition-all">
             <UserPlus size={20} />
             Add User
