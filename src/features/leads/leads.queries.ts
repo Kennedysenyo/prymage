@@ -3,7 +3,7 @@
 import { user } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/db";
 import { leadNote, leads, leadStageHistory } from "@/lib/db/schema";
-import { asc, count, eq } from "drizzle-orm";
+import { asc, count, desc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 
 export const fetchAllLeads = async () => {
@@ -20,7 +20,8 @@ export const fetchAllLeads = async () => {
         assignedTo: leads.assignedTo,
         createdAt: leads.createdAt,
       })
-      .from(leads);
+      .from(leads)
+      .orderBy(desc(leads.createdAt));
     return allLeads;
   } catch (e) {
     throw new Error("Error Fetching posts");

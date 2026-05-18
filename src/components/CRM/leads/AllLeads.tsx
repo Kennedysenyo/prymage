@@ -17,6 +17,7 @@ import {
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
 import { LeadsTable } from "@/features/leads/leads.types";
+import { capitalizeWord } from "@/lib/utils";
 
 interface Props {
   leads: LeadsTable[];
@@ -69,7 +70,7 @@ export function AllLeads({ leads }: Props) {
               placeholder="Search leads..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#5B2CA5] transition-colors"
+              className="w-full pl-10 pr-4 text-gray-600 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#5B2CA5] transition-colors"
             />
           </div>
         </div>
@@ -137,8 +138,12 @@ export function AllLeads({ leads }: Props) {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-gray-700">{lead.company}</td>
-                  <td className="px-6 py-4 text-gray-700">{lead.interest}</td>
-                  <td className="px-6 py-4 text-gray-700">{lead.country}</td>
+                  <td className="px-6 py-4 text-gray-700">
+                    {capitalizeWord(lead.interest)}
+                  </td>
+                  <td className="px-6 py-4 text-gray-700">
+                    {capitalizeWord(lead.country)}
+                  </td>
                   <td className="px-6 py-4">
                     <span
                       className={`px-3 py-1 rounded-lg text-sm font-medium ${getStageBadge(lead.stage)}`}

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
+import { capitalizeWord } from "@/lib/utils";
 
 interface User {
   id: string;
@@ -121,7 +122,7 @@ export function AllUsers({ users }: Props) {
                           : "bg-blue-100 text-blue-700"
                       }`}
                     >
-                      {user.role}
+                      {capitalizeWord(user.role)}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-gray-700">
