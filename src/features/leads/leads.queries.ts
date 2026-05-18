@@ -19,9 +19,11 @@ export const fetchAllLeads = async () => {
         country: leads.country,
         stage: leads.stage,
         assignedTo: leads.assignedTo,
+        assignedUser: user.name,
         createdAt: leads.createdAt,
       })
       .from(leads)
+      .leftJoin(user, eq(leads.assignedTo, user.id))
       .orderBy(desc(leads.createdAt));
     return allLeads;
   } catch (e) {
@@ -41,10 +43,12 @@ export const fetchLeadById = async (id: string) => {
         interest: leads.interest,
         country: leads.country,
         stage: leads.stage,
+        assignedUser: user.name,
         assignedTo: leads.assignedTo,
         createdAt: leads.createdAt,
       })
       .from(leads)
+      .leftJoin(user, eq(leads.assignedTo, user.id))
       .where(eq(leads.id, id));
 
     return lead;

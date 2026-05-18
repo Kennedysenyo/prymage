@@ -26,7 +26,7 @@ import {
   updateStage,
   validateCreateNoteForm,
 } from "@/features/leads/leads.service";
-import { cn } from "@/lib/utils";
+import { capitalizeWord, cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 
 interface Note {
@@ -211,7 +211,9 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Country</p>
-                <p className="font-medium text-gray-900">{lead.country}</p>
+                <p className="font-medium text-gray-900">
+                  {capitalizeWord(lead.country)}
+                </p>
               </div>
             </div>
 
@@ -221,7 +223,9 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Interest</p>
-                <p className="font-medium text-gray-900">{lead.interest}</p>
+                <p className="font-medium text-gray-900">
+                  {capitalizeWord(lead.interest)}
+                </p>
               </div>
             </div>
 
@@ -231,7 +235,9 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Assigned Staff</p>
-                <p className="font-medium text-gray-900">{lead.assignedTo}</p>
+                <p className="font-medium text-gray-900">
+                  {lead.assignedUser ?? "None"}
+                </p>
               </div>
             </div>
 

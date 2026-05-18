@@ -151,7 +151,9 @@ export function AllLeads({ leads }: Props) {
                       {lead.stage.charAt(0).toUpperCase() + lead.stage.slice(1)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-gray-700">{lead.assignedTo}</td>
+                  <td className="px-6 py-4 text-gray-700">
+                    {lead.assignedUser}
+                  </td>
                   <td className="px-6 py-4 text-gray-700">
                     {lead.createdAt.toLocaleDateString()}
                   </td>
