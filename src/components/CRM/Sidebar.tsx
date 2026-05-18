@@ -16,13 +16,16 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogOutButton } from "./LogOutButton";
+import { useSidarState } from "@/hooks/useSidebarState";
+import { SessionType } from "@/types/global";
 
-interface SidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
+interface Props {
+  session: SessionType;
 }
 
-export function Sidebar({ isOpen, onClose }: SidebarProps) {
+export function Sidebar({ session }: Props) {
+  const { isOpen, handleOpen: onClose } = useSidarState();
+
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/admin/dashboard" },
     { icon: Briefcase, label: "Leads", path: "/admin/leads" },
@@ -81,12 +84,18 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="bg-white/10 rounded-xl p-4 mb-3 backdrop-blur-sm">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center">
-              <span className="text-white font-semibold">AD</span>
+              <img
+                className="w-full h-full"
+                src={session?.user?.image ?? "/assets/default-image.png"}
+                alt={session?.user?.name ?? "Note Author"}
+              />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-white font-medium truncate">Admin User</p>
+              <p className="text-white font-medium truncate">
+                {session?.user?.name}
+              </p>
               <p className="text-white/60 text-sm truncate">
-                admin@prymage.com
+                {session?.user?.email}
               </p>
             </div>
           </div>

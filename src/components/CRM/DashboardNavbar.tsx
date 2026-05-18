@@ -1,16 +1,42 @@
 "use client";
 
 import { Menu, Search, Bell, ChevronDown } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
 
-interface NavbarProps {
-  onMenuClick: () => void;
-  title: string;
+import { MenuButton } from "./MenuButton";
+import { authClient } from "@/lib/better-auth/auth-client";
+import { usePathname } from "next/navigation";
+import { useSidarState } from "@/hooks/useSidebarState";
+import { SessionType } from "@/types/global";
+
+const pageTitles: Record<string, string> = {
+  "/dashboard": "Dashboard Overview",
+  "/dashboard/leads": "Leads Management",
+  "/dashboard/users": "Users Management",
+  "/dashboard/users/add": "Add New User",
+  "/dashboard/analytics": "Analytics",
+  "/dashboard/settings": "Settings",
+};
+
+interface Props {
+  userSession: SessionType;
 }
 
-export function DashboardNavbar({ onMenuClick, title }: NavbarProps) {
-  const [showUserMenu, setShowUserMenu] = useState(false);
+export function DashboardNavbar({ userSession: session }: Props) {
+  const { handleOpen: onMenuClick } = useSidarState();
+
+  const pathname = usePathname();
+  const getPageTitle = () => {
+    if (pathname.match(/\/dashboard\/leads\/\d+/)) {
+      return "Lead Details";
+    }
+    if (pathname.match(/\/dashboard\/users\/edit\/\d+/)) {
+      return "Edit User";
+    }
+    if (pathname.match(/\/dashboard\/users\/\d+/)) {
+      return "User Details";
+    }
+    return pageTitles[pathname] || "Dashboard";
+  };
 
   return (
     <header className="sticky top-0 z-30 bg-white border-b border-gray-200 px-4 lg:px-8 py-4">
@@ -22,10 +48,11 @@ export function DashboardNavbar({ onMenuClick, title }: NavbarProps) {
           >
             <Menu size={24} />
           </button>
-          <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{getPageTitle()}</h1>
         </div>
 
         <div className="flex items-center gap-4">
+          {/*
           <div className="hidden md:flex items-center bg-gray-100 rounded-lg px-4 py-2 w-80">
             <Search size={20} className="text-gray-400 mr-2" />
             <input
@@ -33,58 +60,14 @@ export function DashboardNavbar({ onMenuClick, title }: NavbarProps) {
               placeholder="Search..."
               className="bg-transparent outline-none w-full text-gray-700 placeholder-gray-400"
             />
-          </div>
+          </div> */}
 
           <button className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <Bell size={20} />
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
           </button>
 
-          <div className="relative">
-            <button
-              onClick={() => setShowUserMenu(!showUserMenu)}
-              className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <div className="w-8 h-8 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-semibold">AD</span>
-              </div>
-              <ChevronDown size={16} className="hidden sm:block" />
-            </button>
-
-            {showUserMenu && (
-              <>
-                <div
-                  className="fixed inset-0 z-10"
-                  onClick={() => setShowUserMenu(false)}
-                />
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-20">
-                  <div className="px-4 py-3 border-b border-gray-100">
-                    <p className="font-medium text-gray-900">Admin User</p>
-                    <p className="text-sm text-gray-500">admin@prymage.com</p>
-                  </div>
-                  <Link
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Profile
-                  </Link>
-                  <Link
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Settings
-                  </Link>
-                  <hr className="my-2" />
-                  <Link
-                    href="#"
-                    className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                  >
-                    Logout
-                  </Link>
-                </div>
-              </>
-            )}
-          </div>
+          <MenuButton user={session?.user} />
         </div>
       </div>
     </header>
