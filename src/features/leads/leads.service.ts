@@ -11,7 +11,7 @@ import {
   CreateNoteFormResponseType,
 } from "./leads.types";
 import { handleError } from "@/lib/utils";
-import { leadNote, leads } from "@/lib/db/schema";
+import { leadNote, leads, leadStageHistory } from "@/lib/db/schema";
 import { db } from "@/lib/db/db";
 import { revalidatePath } from "next/cache";
 
@@ -19,7 +19,20 @@ const createLead = async (
   data: CreateLeadsDataType,
 ): Promise<string | null> => {
   try {
-    await db.insert(leads).values({ ...data });
+    await db.transaction(async (tx) => {
+      const [lead] = await tx
+        .insert(leads)
+        .values({ ...data })
+        .returning();
+      await tx.insert(leadStageHistory).values({
+        leadId: lead.id,
+        oldStage: null,
+        newStage: "new",
+        description: "Lead added to CRM",
+        activity: "Lead Created",
+      });
+    });
+
     return null;
   } catch (error) {
     return handleError(error);

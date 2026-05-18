@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useTransform } from "motion/react";
+import { motion } from "motion/react";
 import { useActionState, useEffect, useState, useTransition } from "react";
 import {
   Mail,
@@ -37,7 +37,7 @@ interface History {
   id: string;
   userName: string | null;
   userImage: string | null;
-  oldStage: string;
+  oldStage: string | null;
   newStage: string;
   createdAt: Date;
 }

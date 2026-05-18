@@ -17,6 +17,13 @@ export const leadStages = pgEnum("stages", [
   "lost",
 ]);
 
+export const activitTypes = pgEnum("activity_type", [
+  "Lead Created",
+  "Stage Changed",
+  "Note Added",
+  "Assigned Staff",
+]);
+
 export const leads = pgTable(
   "leads",
   {
@@ -29,7 +36,9 @@ export const leads = pgTable(
     country: text("country").notNull(),
     message: text("message").notNull(),
     stage: leadStages("stage").notNull().default("new"),
-    assignedTo: text("assignedTo").references(() => authTables.user.id),
+    assignedTo: text("assignedTo").references(() => authTables.user.id, {
+      onDelete: "set null",
+    }),
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),
   },
@@ -44,26 +53,37 @@ export const leads = pgTable(
 export const leadNote = pgTable("lead_notes", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
   leadId: uuid("leadId")
-    .references(() => leads.id)
+    .references(() => leads.id, { onDelete: "cascade" })
     .notNull(),
   userId: text("userId")
-    .references(() => authTables.user.id)
+    .references(() => authTables.user.id, { onDelete: "cascade" })
     .notNull(),
   note: text("note").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
-export const leadStageHistory = pgTable("lead_stage_history", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  leadId: uuid("leadId")
-    .notNull()
-    .references(() => leads.id),
-  changedBy: text("changedBy")
-    .notNull()
-    .references(() => authTables.user.id),
-  oldStage: text("oldStage").notNull(),
-  newStage: text("newStage").notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
+export const leadStageHistory = pgTable(
+  "lead_stage_history",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    leadId: uuid("leadId")
+      .notNull()
+      .references(() => leads.id),
+    changedBy: text("changedBy").references(() => authTables.user.id, {
+      onDelete: "set null",
+    }),
+    activity: activitTypes("activity").notNull(),
+    description: text("description").notNull(),
+    oldStage: leadStages("oldStage"),
+    newStage: leadStages("newStage").notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  },
+  (table) => [
+    check(
+      "activity_check_constraint",
+      sql`${table.activity} IN ('Lead Created', 'Stage Changed', 'Note Added', 'Assigned Staff')`,
+    ),
+  ],
+);
 
 export const authSchemas = { ...authTables };
