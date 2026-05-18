@@ -77,15 +77,10 @@ export const fetchHistoryByLeadId = async (id: string) => {
     const history = await db
       .select({
         id: leadStageHistory.id,
-
-        userName: user.name,
-
-        userImage: user.image,
-
+        activity: leadStageHistory.activity,
+        description: leadStageHistory.description,
         oldStage: leadStageHistory.oldStage,
-
         newStage: leadStageHistory.newStage,
-
         createdAt: leadStageHistory.createdAt,
       })
       .from(leadStageHistory)

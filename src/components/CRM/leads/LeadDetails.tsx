@@ -39,11 +39,11 @@ interface Note {
 
 interface History {
   id: string;
-  userName: string | null;
-  userImage: string | null;
-  oldStage: string | null;
-  newStage: string;
+  activity: "Lead Created" | "Stage Changed" | "Note Added" | "Assigned Staff";
+  description: string;
+  newStage: Stage;
   createdAt: Date;
+  oldStage?: Stage | null;
 }
 
 interface Props {
@@ -372,7 +372,7 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
           </h3>
 
           <div className="space-y-6">
-            {timeline.map((event, index) => (
+            {history.map((event, index) => (
               <motion.div
                 key={event.id}
                 initial={{ opacity: 0, x: -20 }}
@@ -384,20 +384,20 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
                   <div className="absolute left-5 top-10 bottom-0 w-px bg-gray-200" />
                 )}
                 <div
-                  className={`w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0 ${event.color}`}
+                  className={`w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0 ${""}`}
                 >
-                  <event.icon size={20} />
+                  {/* <event.icon size={20} /> */}
                 </div>
                 <div className="flex-1 pb-6">
                   <h4 className="font-semibold text-gray-900 mb-1">
-                    {event.label}
+                    {event.activity}
                   </h4>
                   <p className="text-sm text-gray-600 mb-1">
                     {event.description}
                   </p>
                   <p className="text-xs text-gray-500 flex items-center gap-1">
                     <Clock size={12} />
-                    {event.timestamp}
+                    {event.createdAt.toLocaleDateString()}
                   </p>
                 </div>
               </motion.div>
