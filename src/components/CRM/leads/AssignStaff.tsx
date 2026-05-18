@@ -78,14 +78,14 @@ export function AssignStaff({ actionBy, lead, users }: Props) {
           staffId: selectedStaff,
           actionBy,
         });
-      });
 
-      if (res) {
-        toast.error(res);
-      } else {
-        toast.success("Assigned staff successfully!");
-        router.push(`/admin/leads/${lead.id}/details`);
-      }
+        if (res) {
+          toast.error(res);
+        } else {
+          toast.success("Assigned staff successfully!");
+          router.push(`/admin/leads/${lead.id}/details`);
+        }
+      });
     }
   };
 

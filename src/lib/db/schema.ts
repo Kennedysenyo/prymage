@@ -68,7 +68,7 @@ export const leadStageHistory = pgTable(
     id: uuid("id").defaultRandom().primaryKey(),
     leadId: uuid("leadId")
       .notNull()
-      .references(() => leads.id),
+      .references(() => leads.id, { onDelete: "cascade" }),
     actionBy: text("actionBy").references(() => authTables.user.id, {
       onDelete: "set null",
     }),

@@ -12,12 +12,12 @@ export const LogOutButton = () => {
     let response: string | null = null;
     startTransition(async () => {
       response = await logOut();
+      if (response) {
+        toast.error(response);
+      } else {
+        toast.success("Logged out successfully!");
+      }
     });
-    if (response) {
-      toast.error(response);
-    } else {
-      toast.success("Logged out successfully!");
-    }
   };
 
   return (

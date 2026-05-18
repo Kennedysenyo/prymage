@@ -215,3 +215,14 @@ export const assignStaff = async ({
     return handleError(error);
   }
 };
+
+export const deleteLeadById = async (id: string): Promise<string | null> => {
+  try {
+    await db.delete(leads).where(eq(leads.id, id));
+    revalidatePath("/admin/leads");
+    return null;
+  } catch (error) {
+    console.log(error);
+    return handleError(error);
+  }
+};

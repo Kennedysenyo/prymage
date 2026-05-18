@@ -83,13 +83,13 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
         lead.stage,
         selectedStage as Stage,
       );
-    });
 
-    if (res) {
-      toast.error(res);
-    } else {
-      toast.success("Stage updated successfully!");
-    }
+      if (res) {
+        toast.error(res);
+      } else {
+        toast.success("Stage updated successfully!");
+      }
+    });
   };
 
   const initialState: CreateNoteFormResponseType = {

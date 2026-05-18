@@ -18,6 +18,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
 import { LeadsTable } from "@/features/leads/leads.types";
 import { capitalizeWord } from "@/lib/utils";
+import { DeleteLeadButton } from "./DeleteLeadButton";
 
 interface Props {
   leads: LeadsTable[];
@@ -152,7 +153,7 @@ export function AllLeads({ leads }: Props) {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-gray-700">
-                    {lead.assignedUser}
+                    {lead.assignedUser ?? "None"}
                   </td>
                   <td className="px-6 py-4 text-gray-700">
                     {lead.createdAt.toLocaleDateString()}
@@ -197,10 +198,7 @@ export function AllLeads({ leads }: Props) {
                             </Link>
                           </DropdownMenu.Item>
                           <DropdownMenu.Separator className="h-px bg-gray-200 my-1" />
-                          <DropdownMenu.Item className="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 cursor-pointer outline-none">
-                            <Trash2 size={16} />
-                            Delete Lead
-                          </DropdownMenu.Item>
+                          <DeleteLeadButton leadId={lead.id} />
                         </DropdownMenu.Content>
                       </DropdownMenu.Portal>
                     </DropdownMenu.Root>
