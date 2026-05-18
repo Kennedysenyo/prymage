@@ -78,7 +78,7 @@ export function AllLeads({ leads }: Props) {
           <select
             value={stageFilter}
             onChange={(e) => setStageFilter(e.target.value)}
-            className="flex-1 sm:flex-none px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#5B2CA5] transition-colors"
+            className="flex-1 sm:flex-none text-gray-600 px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#5B2CA5] transition-colors"
           >
             <option value="all">All Stages</option>
             <option value="new">New</option>

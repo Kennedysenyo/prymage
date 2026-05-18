@@ -46,7 +46,7 @@ export function DashboardNavbar({ userSession: session }: Props) {
             onClick={onMenuClick}
             className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <Menu size={24} />
+            <Menu size={24} className="text-gray-600 " />
           </button>
           <h1 className="text-2xl font-bold text-gray-900">{getPageTitle()}</h1>
         </div>
