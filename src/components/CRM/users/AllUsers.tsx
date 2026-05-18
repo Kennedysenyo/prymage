@@ -14,66 +14,22 @@ import {
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
 
-interface Staff {
-  id: number;
+interface User {
+  id: string;
   name: string;
   email: string;
-  role: "Admin" | "Staff";
+  image: string | null;
+  role: "admin" | "staff";
   leadsAssigned: number;
-  dateCreated: string;
-  avatar: string;
+  createdAt: Date;
 }
 
-export function AllUsers() {
-  const [searchTerm, setSearchTerm] = useState("");
+interface Props {
+  users: User[];
+}
 
-  const users: Staff[] = [
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john@prymage.com",
-      role: "Admin",
-      leadsAssigned: 45,
-      dateCreated: "2023-01-15",
-      avatar: "JD",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane@prymage.com",
-      role: "Staff",
-      leadsAssigned: 38,
-      dateCreated: "2023-03-22",
-      avatar: "JS",
-    },
-    {
-      id: 3,
-      name: "Mike Johnson",
-      email: "mike@prymage.com",
-      role: "Staff",
-      leadsAssigned: 32,
-      dateCreated: "2023-05-10",
-      avatar: "MJ",
-    },
-    {
-      id: 4,
-      name: "Sarah Wilson",
-      email: "sarah@prymage.com",
-      role: "Staff",
-      leadsAssigned: 28,
-      dateCreated: "2023-07-18",
-      avatar: "SW",
-    },
-    {
-      id: 5,
-      name: "David Brown",
-      email: "david@prymage.com",
-      role: "Staff",
-      leadsAssigned: 24,
-      dateCreated: "2024-01-05",
-      avatar: "DB",
-    },
-  ];
+export function AllUsers({ users }: Props) {
+  const [searchTerm, setSearchTerm] = useState("");
 
   const filteredUsers = users.filter(
     (user) =>
@@ -95,7 +51,7 @@ export function AllUsers() {
               placeholder="Search users..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#5B2CA5] transition-colors"
+              className="w-full pl-10 text-gray-600 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#5B2CA5] transition-colors"
             />
           </div>
         </div>
@@ -145,7 +101,11 @@ export function AllUsers() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white font-semibold">
-                        {user.avatar}
+                        <img
+                          className="w-full h-full"
+                          src={user.image ?? "/assets/default-image.png"}
+                          alt={user.name ?? "Note Author"}
+                        />
                       </div>
                       <span className="font-medium text-gray-900">
                         {user.name}
@@ -156,7 +116,7 @@ export function AllUsers() {
                   <td className="px-6 py-4">
                     <span
                       className={`px-3 py-1 rounded-lg text-sm font-medium ${
-                        user.role === "Admin"
+                        user.role === "admin"
                           ? "bg-purple-100 text-purple-700"
                           : "bg-blue-100 text-blue-700"
                       }`}
@@ -168,13 +128,13 @@ export function AllUsers() {
                     {user.leadsAssigned}
                   </td>
                   <td className="px-6 py-4 text-gray-700">
-                    {user.dateCreated}
+                    {user.createdAt.toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4">
                     <DropdownMenu.Root>
                       <DropdownMenu.Trigger asChild>
                         <button className="p-2 hover:bg-gray-200 rounded-lg transition-colors">
-                          <MoreVertical size={18} />
+                          <MoreVertical size={18} className="text-gray-600" />
                         </button>
                       </DropdownMenu.Trigger>
                       <DropdownMenu.Portal>
@@ -227,7 +187,11 @@ export function AllUsers() {
           >
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white font-semibold">
-                {user.avatar}
+                <img
+                  className="w-full h-full"
+                  src={user.image ?? "/assets/default-image.png"}
+                  alt={user.name ?? "Note Author"}
+                />
               </div>
               <div className="flex-1">
                 <h3 className="font-bold text-gray-900">{user.name}</h3>
@@ -235,7 +199,7 @@ export function AllUsers() {
               </div>
               <span
                 className={`px-3 py-1 rounded-lg text-sm font-medium ${
-                  user.role === "Admin"
+                  user.role === "admin"
                     ? "bg-purple-100 text-purple-700"
                     : "bg-blue-100 text-blue-700"
                 }`}
@@ -250,7 +214,7 @@ export function AllUsers() {
               </p>
               <p className="text-gray-600">
                 <span className="font-medium">Date Created:</span>{" "}
-                {user.dateCreated}
+                {user.createdAt.toDateString()}
               </p>
             </div>
             <div className="flex gap-2">

@@ -1,4 +1,5 @@
 import { AllUsers } from "@/components/CRM/users/AllUsers";
+import { fetchAllUsers } from "@/features/users/users.queries";
 import { getSession } from "@/lib/better-auth/auth-helpers";
 import { redirect } from "next/navigation";
 
@@ -8,5 +9,7 @@ export default async function UsersPage() {
     redirect("/sign-in");
   }
 
-  return <AllUsers />;
+  const users = await fetchAllUsers();
+
+  return <AllUsers users={users} />;
 }

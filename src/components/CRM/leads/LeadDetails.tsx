@@ -103,40 +103,40 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
     initialState,
   );
 
-  const timeline = [
-    {
-      id: 1,
-      icon: UserPlus,
-      label: "Lead Created",
-      description: "Lead added to CRM",
-      timestamp: "2024-05-12 9:00 AM",
-      color: "text-green-600",
-    },
-    {
-      id: 2,
-      icon: MessageSquare,
-      label: "Stage Changed",
-      description: "New → Contacted",
-      timestamp: "2024-05-14 10:30 AM",
-      color: "text-purple-600",
-    },
-    {
-      id: 3,
-      icon: Edit,
-      label: "Note Added",
-      description: "Follow-up call completed",
-      timestamp: "2024-05-15 2:45 PM",
-      color: "text-blue-600",
-    },
-    {
-      id: 4,
-      icon: CheckCircle,
-      label: "Stage Changed",
-      description: "Contacted → Qualified",
-      timestamp: "2024-05-16 9:00 AM",
-      color: "text-yellow-600",
-    },
-  ];
+  // const timeline = [
+  //   {
+  //     id: 1,
+  //     icon: UserPlus,
+  //     label: "Lead Created",
+  //     description: "Lead added to CRM",
+  //     timestamp: "2024-05-12 9:00 AM",
+  //     color: "text-green-600",
+  //   },
+  //   {
+  //     id: 2,
+  //     icon: MessageSquare,
+  //     label: "Stage Changed",
+  //     description: "New → Contacted",
+  //     timestamp: "2024-05-14 10:30 AM",
+  //     color: "text-purple-600",
+  //   },
+  //   {
+  //     id: 3,
+  //     icon: Edit,
+  //     label: "Note Added",
+  //     description: "Follow-up call completed",
+  //     timestamp: "2024-05-15 2:45 PM",
+  //     color: "text-blue-600",
+  //   },
+  //   {
+  //     id: 4,
+  //     icon: CheckCircle,
+  //     label: "Stage Changed",
+  //     description: "Contacted → Qualified",
+  //     timestamp: "2024-05-16 9:00 AM",
+  //     color: "text-yellow-600",
+  //   },
+  // ];
 
   useEffect(() => {
     if (state.success) {
@@ -380,7 +380,7 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
                 transition={{ delay: index * 0.1, duration: 0.3 }}
                 className="flex gap-4 relative"
               >
-                {index < timeline.length - 1 && (
+                {index < history.length - 1 && (
                   <div className="absolute left-5 top-10 bottom-0 w-px bg-gray-200" />
                 )}
                 <div

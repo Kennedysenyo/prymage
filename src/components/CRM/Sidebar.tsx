@@ -30,7 +30,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     { icon: Users, label: "Users", path: "/admin/users" },
     { icon: UserPlus, label: "Add User", path: "/admin/users/add" },
     // { icon: TrendingUp, label: "Analytics", path: "/dashboard/analytics" },
-    { icon: Settings, label: "Settings", path: "/admin/settings" },
+    // { icon: Settings, label: "Settings", path: "/admin/settings" },
   ];
 
   const pathname = usePathname();
@@ -39,7 +39,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     if (path === "/dashboard") {
       return pathname === "/dashboard";
     }
-    return pathname.startsWith(path);
+    return pathname === path;
   };
 
   const SidebarContent = () => (
