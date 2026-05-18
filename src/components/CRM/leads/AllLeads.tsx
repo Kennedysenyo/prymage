@@ -154,7 +154,7 @@ export function AllLeads({ leads }: Props) {
                     <DropdownMenu.Root>
                       <DropdownMenu.Trigger asChild>
                         <button className="p-2 hover:bg-gray-200 rounded-lg transition-colors">
-                          <MoreVertical size={18} />
+                          <MoreVertical size={18} className="text-gray-500" />
                         </button>
                       </DropdownMenu.Trigger>
                       <DropdownMenu.Portal>
