@@ -69,7 +69,7 @@ export const leadStageHistory = pgTable(
     leadId: uuid("leadId")
       .notNull()
       .references(() => leads.id),
-    changedBy: text("changedBy").references(() => authTables.user.id, {
+    actionBy: text("actionBy").references(() => authTables.user.id, {
       onDelete: "set null",
     }),
     activity: activitTypes("activity").notNull(),

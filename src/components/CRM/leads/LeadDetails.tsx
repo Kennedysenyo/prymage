@@ -20,8 +20,12 @@ import {
 import {
   CreateNoteFormResponseType,
   LeadDetails as Details,
+  Stage,
 } from "@/features/leads/leads.types";
-import { validateCreateNoteForm } from "@/features/leads/leads.service";
+import {
+  updateStage,
+  validateCreateNoteForm,
+} from "@/features/leads/leads.service";
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 
@@ -52,7 +56,7 @@ interface Props {
 
 export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
   const [newNote, setNewNote] = useState("");
-  const [selectedStage, setSelectedStage] = useState("qualified");
+  const [selectedStage, setSelectedStage] = useState(lead.stage);
 
   const stages = ["new", "contacted", "qualified", "won", "lost"];
 
@@ -68,6 +72,25 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
   };
 
   const [pending, startTranstion] = useTransition();
+
+  const handleUpdateStage = () => {
+    let res: string | null = null;
+    if (lead.stage === (selectedStage as Stage)) return;
+    startTranstion(async () => {
+      res = await updateStage(
+        userId,
+        leadId,
+        lead.stage,
+        selectedStage as Stage,
+      );
+    });
+
+    if (res) {
+      toast.error(res);
+    } else {
+      toast.success("Stage updated successfully!");
+    }
+  };
 
   const initialState: CreateNoteFormResponseType = {
     success: false,
@@ -238,7 +261,7 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
             {stages.map((stage) => (
               <button
                 key={stage}
-                onClick={() => setSelectedStage(stage)}
+                onClick={() => setSelectedStage(stage as Stage)}
                 className={`w-full text-left px-4 py-3 rounded-xl transition-all ${
                   selectedStage === stage
                     ? `${getStageBadge(stage)} font-semibold`
@@ -250,8 +273,15 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
             ))}
           </div>
 
-          <button className="w-full px-4 py-3 bg-gradient-to-r from-[#5B2CA5] to-[#D4A24C] text-white rounded-xl hover:shadow-lg transition-all">
-            Update Stage
+          <button
+            onClick={handleUpdateStage}
+            className="w-full px-4 py-3 bg-gradient-to-r from-[#5B2CA5] to-[#D4A24C] text-white rounded-xl hover:shadow-lg transition-all"
+          >
+            {pending ? (
+              <Loader2 size={18} className="animate-spin mx-auto" />
+            ) : (
+              " Update Stage"
+            )}
           </button>
         </motion.div>
       </div>

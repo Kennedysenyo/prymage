@@ -90,7 +90,7 @@ export const fetchHistoryByLeadId = async (id: string) => {
       })
       .from(leadStageHistory)
 
-      .leftJoin(user, eq(leadStageHistory.changedBy, user.id))
+      .leftJoin(user, eq(leadStageHistory.actionBy, user.id))
 
       .where(eq(leadStageHistory.leadId, id));
 

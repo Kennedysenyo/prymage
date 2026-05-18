@@ -9,11 +9,13 @@ import {
   CreateNoteDataType,
   CreateNoteFormFieldErrors,
   CreateNoteFormResponseType,
+  Stage,
 } from "./leads.types";
 import { handleError } from "@/lib/utils";
 import { leadNote, leads, leadStageHistory } from "@/lib/db/schema";
 import { db } from "@/lib/db/db";
 import { revalidatePath } from "next/cache";
+import { desc, eq } from "drizzle-orm";
 
 const createLead = async (
   data: CreateLeadsDataType,
@@ -80,10 +82,29 @@ export const validateLeadsForm = async (
 
 const addNote = async (data: CreateNoteDataType): Promise<string | null> => {
   try {
-    await db
-      .insert(leadNote)
-      .values({ ...data })
-      .returning();
+    await db.transaction(async (tx) => {
+      const [history] = await tx
+        .select({
+          oldStage: leadStageHistory.oldStage,
+          newStage: leadStageHistory.newStage,
+        })
+        .from(leadStageHistory)
+        .where(eq(leadStageHistory.leadId, data.leadId))
+        .orderBy(desc(leadStageHistory.createdAt))
+        .limit(1);
+      const [note] = await tx
+        .insert(leadNote)
+        .values({ ...data })
+        .returning();
+      await tx.insert(leadStageHistory).values({
+        leadId: note.leadId,
+        actionBy: note.userId,
+        oldStage: history.oldStage,
+        newStage: history.newStage,
+        description: note.note,
+        activity: "Note Added",
+      });
+    });
 
     return null;
   } catch (error) {
@@ -118,4 +139,33 @@ export const validateCreateNoteForm = async (
   }
   revalidatePath(`/admin/leads/${result.data.leadId}/details`);
   return { success: true, errors: {}, errorMessage: null };
+};
+
+export const updateStage = async (
+  userId: string,
+  leadId: string,
+  currentStage: Stage,
+  newStage: Stage,
+): Promise<string | null> => {
+  try {
+    await db.transaction(async (tx) => {
+      const [updatedLead] = await tx
+        .update(leads)
+        .set({ stage: newStage })
+        .where(eq(leads.id, leadId))
+        .returning();
+      await tx.insert(leadStageHistory).values({
+        leadId: leadId,
+        actionBy: userId,
+        oldStage: currentStage,
+        newStage: updatedLead.stage,
+        description: `${currentStage} → ${updatedLead.stage}`,
+        activity: "Stage Changed",
+      });
+    });
+    revalidatePath(`/admin/leads/${leadId}/details`);
+    return null;
+  } catch (error) {
+    return handleError(error);
+  }
 };

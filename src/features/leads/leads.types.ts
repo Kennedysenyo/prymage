@@ -30,3 +30,5 @@ export type CreateNoteFormResponseType = {
   errors: CreateNoteFormFieldErrors;
   errorMessage: string | null;
 };
+
+export type Stage = "new" | "contacted" | "qualified" | "won" | "lost";
