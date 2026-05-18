@@ -14,10 +14,11 @@ const createUser = async (
   userData: Omit<CreateUserFormType, "cnfrmPassword">,
 ): Promise<string | null> => {
   try {
+    console.log("The data", userData);
     const res = await auth.api.createUser({
       body: {
         ...userData,
-        data: { emailVerified: true },
+        data: { emailVerified: true, position: userData.position },
       },
     });
 

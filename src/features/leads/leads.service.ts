@@ -16,6 +16,7 @@ import { leadNote, leads, leadStageHistory } from "@/lib/db/schema";
 import { db } from "@/lib/db/db";
 import { revalidatePath } from "next/cache";
 import { desc, eq } from "drizzle-orm";
+import { user } from "@/lib/db/auth-schema";
 
 const createLead = async (
   data: CreateLeadsDataType,
@@ -164,6 +165,51 @@ export const updateStage = async (
       });
     });
     revalidatePath(`/admin/leads/${leadId}/details`);
+    return null;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const assignStaff = async ({
+  leadId,
+  staffId,
+  actionBy,
+}: {
+  leadId: string;
+  staffId: string;
+  actionBy: string;
+}): Promise<string | null> => {
+  try {
+    await db.transaction(async (tx) => {
+      const [history] = await tx
+        .select({
+          oldStage: leadStageHistory.oldStage,
+          newStage: leadStageHistory.newStage,
+        })
+        .from(leadStageHistory)
+        .where(eq(leadStageHistory.leadId, leadId))
+        .orderBy(desc(leadStageHistory.createdAt))
+        .limit(1);
+      await tx
+        .update(leads)
+        .set({ assignedTo: staffId })
+        .where(eq(leads.id, leadId));
+      const [staff] = await tx
+        .select({ name: user.name })
+        .from(user)
+        .where(eq(user.id, staffId));
+      await tx.insert(leadStageHistory).values({
+        leadId: leadId,
+        actionBy: actionBy,
+        oldStage: history.oldStage,
+        newStage: history.newStage,
+        description: staff.name,
+        activity: "Assigned Staff",
+      });
+    });
+
+    revalidatePath(`/admin/leads/${leadId}/assign-staff`);
     return null;
   } catch (error) {
     return handleError(error);

@@ -9,6 +9,7 @@ export const createUserSchema = dbUserSchema
     name: true,
     email: true,
     role: true,
+    position: true,
   })
   .extend({
     name: z.string().min(5, {
@@ -17,6 +18,12 @@ export const createUserSchema = dbUserSchema
     }),
     email: z.email(),
     role: z.enum(["admin", "staff"]),
+    position: z.string().min(2, {
+      error: (iss) =>
+        iss.input?.length !== 0
+          ? "Position must be >= 2 chars long."
+          : "Enter position",
+    }),
     password: z.string().min(8, {
       error: (iss) =>
         iss.input?.length !== 0

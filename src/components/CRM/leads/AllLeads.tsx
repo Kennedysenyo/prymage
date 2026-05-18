@@ -176,7 +176,7 @@ export function AllLeads({ leads }: Props) {
                               View Lead
                             </Link>
                           </DropdownMenu.Item>
-                          <DropdownMenu.Item className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer outline-none">
+                          {/* <DropdownMenu.Item className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer outline-none">
                             <Link
                               href={"/"}
                               className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer outline-none"
@@ -184,10 +184,15 @@ export function AllLeads({ leads }: Props) {
                               <Edit size={16} />
                               Edit Lead
                             </Link>
-                          </DropdownMenu.Item>
+                          </DropdownMenu.Item> */}
                           <DropdownMenu.Item className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer outline-none">
-                            <UserPlus size={16} />
-                            Assign Staff
+                            <Link
+                              href={`/admin/leads/${lead.id}/assign-staff`}
+                              className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer outline-none"
+                            >
+                              <UserPlus size={16} />
+                              Assign Staff
+                            </Link>
                           </DropdownMenu.Item>
                           <DropdownMenu.Separator className="h-px bg-gray-200 my-1" />
                           <DropdownMenu.Item className="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 cursor-pointer outline-none">

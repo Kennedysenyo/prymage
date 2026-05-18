@@ -48,7 +48,7 @@ export function Sidebar({ session }: Props) {
   const SidebarContent = () => (
     <div className="h-full flex flex-col bg-[#181225] text-white">
       <div className="flex items-center justify-between p-6 border-b border-white/10">
-        <Link href="/dashboard" className="flex items-center gap-2">
+        <Link href="/admin/dashboard" className="flex items-center gap-2">
           <span className="text-2xl font-bold bg-gradient-to-r from-[#D4A24C] to-yellow-400 bg-clip-text text-transparent">
             Prymage
           </span>

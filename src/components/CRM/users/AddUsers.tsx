@@ -3,7 +3,17 @@
 import { motion } from "motion/react";
 import { ChangeEvent, useActionState, useEffect, useState } from "react";
 
-import { ArrowLeft, Eye, EyeOff, User, Mail, Lock, Shield } from "lucide-react";
+import {
+  ArrowLeft,
+  Eye,
+  EyeOff,
+  User,
+  Mail,
+  Lock,
+  Shield,
+  Briefcase,
+  Loader2,
+} from "lucide-react";
 import Link from "next/link";
 import {
   CreateUserFormResponseType,
@@ -12,6 +22,7 @@ import {
 import { validateCreateUserForm } from "@/features/users/users.service";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { cn } from "@/lib/utils";
 
 export default function AddUser() {
   const [showPassword, setShowPassword] = useState(false);
@@ -20,6 +31,7 @@ export default function AddUser() {
     name: "",
     email: "",
     role: "staff",
+    position: "",
     password: "",
     cnfrmPassword: "",
   });
@@ -51,6 +63,7 @@ export default function AddUser() {
         name: "",
         email: "",
         role: "staff",
+        position: "",
         password: "",
         cnfrmPassword: "",
       });
@@ -166,6 +179,31 @@ export default function AddUser() {
 
           <div>
             <label className="block text-gray-700 font-medium mb-2">
+              Position
+            </label>
+            <div className="relative">
+              <Briefcase
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
+              <input
+                type="text"
+                name="position"
+                value={formData.position}
+                onChange={handleChange}
+                className="w-full pl-12 text-gray-600 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#5B2CA5] transition-colors"
+                placeholder="eg.Accountant"
+                required
+              />
+            </div>
+
+            {state.errors.position && (
+              <p className="text-xs text-red-400">{state.errors.position}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">
               Password
             </label>
             <div className="relative">
@@ -178,7 +216,7 @@ export default function AddUser() {
                 value={formData.password}
                 name="password"
                 onChange={handleChange}
-                className="w-full pl-12 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#5B2CA5] transition-colors"
+                className="w-full pl-12 pr-12 py-3 text-gray-600 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#5B2CA5] transition-colors"
                 placeholder="••••••••"
                 required
               />
@@ -232,10 +270,16 @@ export default function AddUser() {
             <button
               type="submit"
               aria-disabled={isPending}
-              style={{ cursor: isPending ? "none" : "cursor" }}
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-[#5B2CA5] to-[#D4A24C] text-white rounded-xl hover:shadow-lg transition-all"
+              className={cn(
+                "flex-1 px-6 py-3 bg-gradient-to-r from-[#5B2CA5] to-[#D4A24C] text-white rounded-xl hover:shadow-lg transition-all",
+                isPending && "pointer-events-none",
+              )}
             >
-              Create User
+              {isPending ? (
+                <Loader2 size={18} className="animate-spin mx-auto" />
+              ) : (
+                " Create User"
+              )}
             </button>
           </div>
         </form>

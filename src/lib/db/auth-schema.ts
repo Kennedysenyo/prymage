@@ -20,6 +20,7 @@ export const user = pgTable(
     emailVerified: boolean("email_verified").default(false).notNull(),
     image: text("image"),
     role: rolesEnum().notNull().default("staff"),
+    position: text("position").notNull(),
     banned: boolean().notNull().default(false),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")

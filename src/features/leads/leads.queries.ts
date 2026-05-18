@@ -5,6 +5,7 @@ import { db } from "@/lib/db/db";
 import { leadNote, leads, leadStageHistory } from "@/lib/db/schema";
 import { asc, count, desc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import { fetchAllUsers } from "../users/users.queries";
 
 export const fetchAllLeads = async () => {
   try {
@@ -85,9 +86,7 @@ export const fetchHistoryByLeadId = async (id: string) => {
         createdAt: leadStageHistory.createdAt,
       })
       .from(leadStageHistory)
-
       .leftJoin(user, eq(leadStageHistory.actionBy, user.id))
-
       .where(eq(leadStageHistory.leadId, id));
 
     return history;
@@ -194,4 +193,39 @@ export const fetchDashboardCardStats = async () => {
     wonLeads,
     lostLeads,
   };
+};
+
+export const fetchLeadToAssignStaffById = async (id: string) => {
+  try {
+    const [lead] = await db
+      .select({
+        id: leads.id,
+        name: leads.name,
+        company: leads.company,
+        email: leads.email,
+        phone: leads.phone,
+        interest: leads.interest,
+        country: leads.country,
+        stage: leads.stage,
+        assignedTo: leads.assignedTo,
+        assignedUser: user.name,
+        createdAt: leads.createdAt,
+      })
+      .from(leads)
+      .leftJoin(user, eq(leads.assignedTo, user.id))
+      .where(eq(leads.id, id));
+
+    return lead;
+  } catch (e) {
+    notFound();
+  }
+};
+
+export const fetchLeadByIdAndFetchAllUsers = async (id: string) => {
+  const [lead, allUsers] = await Promise.all([
+    fetchLeadToAssignStaffById(id),
+    fetchAllUsers(),
+  ]);
+
+  return { lead, allUsers };
 };

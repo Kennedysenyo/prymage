@@ -11,9 +11,19 @@ export const auth = betterAuth({
     schema: authSchemas,
     provider: "pg",
   }),
+  user: {
+    additionalFields: {
+      position: {
+        type: "string",
+        required: false,
+      },
+    },
+  },
+
   emailAndPassword: {
     enabled: true,
   },
+
   plugins: [
     emailOTP({
       async sendVerificationOTP({ email, otp, type }) {
@@ -34,7 +44,7 @@ export const auth = betterAuth({
         staff: staffRole,
       },
       adminRoles: ["admin"],
-      adminUserIds: ["d9U7TsMBzbAEgf8IB6vuR4ceL710C5LW"],
+      adminUserIds: ["YqYN88SEezZqZxVwG5mqZUBGgOAyuTyA"],
     }),
     nextCookies(),
   ],
