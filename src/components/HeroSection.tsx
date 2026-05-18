@@ -24,6 +24,13 @@ export function HeroSection() {
     { icon: CheckCircle, text: "Affordable Pricing" },
   ];
 
+  const scrollToSection = (href: string) => {
+    const element = document.querySelector(href);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <section
       id="home"
@@ -71,7 +78,10 @@ export function HeroSection() {
               transition={{ delay: 0.6, duration: 0.8 }}
               className="flex flex-wrap gap-4 mb-8"
             >
-              <button className="px-8 py-4 bg-gradient-to-r from-[#D4A24C] to-yellow-500 text-white rounded-full hover:shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-2">
+              <button
+                onClick={() => scrollToSection("#contact")}
+                className="px-8 py-4 bg-gradient-to-r from-[#D4A24C] to-yellow-500 text-white rounded-full hover:shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-2"
+              >
                 Start Free Consultation
               </button>
               <button className="px-8 py-4 bg-white/10 backdrop-blur-md text-white rounded-full hover:bg-white/20 transition-all duration-300 border border-white/20 flex items-center gap-2">

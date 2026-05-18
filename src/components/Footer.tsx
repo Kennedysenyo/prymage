@@ -3,6 +3,8 @@
 import { motion } from "motion/react";
 import { Mail } from "lucide-react";
 import Link from "next/link";
+import { FaFacebookF, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
 export function Footer() {
   const quickLinks = [
@@ -141,7 +143,8 @@ export function Footer() {
               transition={{ delay: 0.4, duration: 0.6 }}
               className="text-gray-400 text-center md:text-left"
             >
-              © 2026 Prymage Consultancy Ltd. All rights reserved.
+              © {new Date().getFullYear()} Prymage Consultancy Ltd. All rights
+              reserved.
             </motion.p>
 
             <motion.div
@@ -152,15 +155,17 @@ export function Footer() {
               className="flex gap-4"
             >
               {/* TODO: Import icons from react-icons and uncomment the following */}
-              {/* {[Facebook, Twitter, Linkedin, Instagram].map((Icon, index) => (
-                <Link
-                  key={index}
-                  href="#"
-                  className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-gradient-to-r hover:from-[#5B2CA5] hover:to-[#D4A24C] transition-all duration-300"
-                >
-                  <Icon size={20} />
-                </Link>
-              ))} */}
+              {[FaFacebookF, FaXTwitter, FaLinkedin, FaInstagram].map(
+                (Icon, index) => (
+                  <Link
+                    key={index}
+                    href="#"
+                    className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-gradient-to-r hover:from-[#5B2CA5] hover:to-[#D4A24C] transition-all duration-300"
+                  >
+                    <Icon size={20} />
+                  </Link>
+                ),
+              )}
             </motion.div>
           </div>
         </div>
