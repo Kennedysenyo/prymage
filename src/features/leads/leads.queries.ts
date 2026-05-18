@@ -3,7 +3,7 @@
 import { user } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/db";
 import { leadNote, leads, leadStageHistory } from "@/lib/db/schema";
-import { asc, eq } from "drizzle-orm";
+import { asc, count, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 
 export const fetchAllLeads = async () => {
@@ -102,4 +102,95 @@ export const fetchLeadDetailsById = async (id: string) => {
     fetchHistoryByLeadId(id),
   ]);
   return { lead, notes, history };
+};
+
+export const fetchTotalLeadsCount = async () => {
+  const [result] = await db
+    .select({
+      count: count(),
+    })
+    .from(leads);
+
+  return Number(result.count);
+};
+
+export const fetchNewLeadsCount = async () => {
+  const [result] = await db
+    .select({
+      count: count(),
+    })
+    .from(leads)
+    .where(eq(leads.stage, "new"));
+
+  return Number(result.count);
+};
+
+export const fetchContactedLeadsCount = async () => {
+  const [result] = await db
+    .select({
+      count: count(),
+    })
+    .from(leads)
+    .where(eq(leads.stage, "contacted"));
+
+  return Number(result.count);
+};
+
+export const fetchQualifiedLeadsCount = async () => {
+  const [result] = await db
+    .select({
+      count: count(),
+    })
+    .from(leads)
+    .where(eq(leads.stage, "qualified"));
+
+  return Number(result.count);
+};
+
+export const fetchWonLeadsCount = async () => {
+  const [result] = await db
+    .select({
+      count: count(),
+    })
+    .from(leads)
+    .where(eq(leads.stage, "won"));
+
+  return Number(result.count);
+};
+
+export const fetchLostLeads = async () => {
+  const [result] = await db
+    .select({
+      count: count(),
+    })
+    .from(leads)
+    .where(eq(leads.stage, "lost"));
+
+  return Number(result.count);
+};
+
+export const fetchDashboardCardStats = async () => {
+  const [
+    totalLeads,
+    newLeads,
+    contactedLeads,
+    qualifiedLeads,
+    wonLeads,
+    lostLeads,
+  ] = await Promise.all([
+    fetchTotalLeadsCount(),
+    fetchNewLeadsCount(),
+    fetchContactedLeadsCount(),
+    fetchQualifiedLeadsCount(),
+    fetchWonLeadsCount(),
+    fetchLostLeads(),
+  ]);
+  return {
+    totalLeads,
+    newLeads,
+    contactedLeads,
+    qualifiedLeads,
+    wonLeads,
+    lostLeads,
+  };
 };

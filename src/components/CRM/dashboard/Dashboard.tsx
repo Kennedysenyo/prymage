@@ -28,12 +28,23 @@ import {
   PieLabel,
 } from "recharts";
 
-export default function DashboardHome() {
-  const stats = [
+interface Props {
+  stats: {
+    totalLeads: number;
+    newLeads: number;
+    contactedLeads: number;
+    qualifiedLeads: number;
+    wonLeads: number;
+    lostLeads: number;
+  };
+}
+
+export default function DashboardHome({ stats }: Props) {
+  const statsStyles = [
     {
       icon: Briefcase,
       label: "Total Leads",
-      value: "1,247",
+      value: stats.totalLeads,
       change: "+12.5%",
       trend: "up",
       color: "from-blue-500 to-blue-600",
@@ -41,7 +52,7 @@ export default function DashboardHome() {
     {
       icon: UserPlus,
       label: "New Leads",
-      value: "89",
+      value: stats.newLeads,
       change: "+23.1%",
       trend: "up",
       color: "from-green-500 to-green-600",
@@ -49,7 +60,7 @@ export default function DashboardHome() {
     {
       icon: Phone,
       label: "Contacted",
-      value: "324",
+      value: stats.contactedLeads,
       change: "+8.2%",
       trend: "up",
       color: "from-purple-500 to-purple-600",
@@ -57,7 +68,7 @@ export default function DashboardHome() {
     {
       icon: CheckCircle,
       label: "Qualified",
-      value: "156",
+      value: stats.qualifiedLeads,
       change: "+15.3%",
       trend: "up",
       color: "from-indigo-500 to-indigo-600",
@@ -65,7 +76,7 @@ export default function DashboardHome() {
     {
       icon: TrendingUp,
       label: "Won Leads",
-      value: "67",
+      value: stats.wonLeads,
       change: "+18.7%",
       trend: "up",
       color: "from-[#D4A24C] to-yellow-600",
@@ -73,7 +84,7 @@ export default function DashboardHome() {
     {
       icon: XCircle,
       label: "Lost Leads",
-      value: "43",
+      value: stats.lostLeads,
       change: "-5.4%",
       trend: "down",
       color: "from-red-500 to-red-600",
@@ -115,7 +126,7 @@ export default function DashboardHome() {
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {stats.map((stat, index) => (
+        {statsStyles.map((stat, index) => (
           <motion.div
             key={index}
             initial={{ opacity: 0, y: 20 }}
@@ -130,7 +141,7 @@ export default function DashboardHome() {
               >
                 <stat.icon size={24} className="text-white" />
               </div>
-              <div
+              {/* <div
                 className={`flex items-center gap-1 px-2 py-1 rounded-lg ${
                   stat.trend === "up"
                     ? "bg-green-100 text-green-700"
@@ -143,7 +154,7 @@ export default function DashboardHome() {
                   <TrendingDown size={16} />
                 )}
                 <span className="text-sm font-semibold">{stat.change}</span>
-              </div>
+              </div> */}
             </div>
             <h3 className="text-3xl font-bold text-gray-900 mb-1">
               {stat.value}
@@ -153,7 +164,7 @@ export default function DashboardHome() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -184,9 +195,9 @@ export default function DashboardHome() {
               <Tooltip />
             </PieChart>
           </ResponsiveContainer>
-        </motion.div>
+        </motion.div> */}
 
-        <motion.div
+      {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.5 }}
@@ -205,9 +216,9 @@ export default function DashboardHome() {
             </BarChart>
           </ResponsiveContainer>
         </motion.div>
-      </div>
+      </div> */}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -254,9 +265,9 @@ export default function DashboardHome() {
             </BarChart>
           </ResponsiveContainer>
         </motion.div>
-      </div>
+      </div> */}
 
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6, duration: 0.5 }}
@@ -280,7 +291,7 @@ export default function DashboardHome() {
             <Users size={64} className="text-white" />
           </div>
         </div>
-      </motion.div>
+      </motion.div> */}
     </div>
   );
 }

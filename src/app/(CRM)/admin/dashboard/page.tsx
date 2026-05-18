@@ -1,4 +1,5 @@
 import DashboardHome from "@/components/CRM/dashboard/Dashboard";
+import { fetchDashboardCardStats } from "@/features/leads/leads.queries";
 import { getSession } from "@/lib/better-auth/auth-helpers";
 import { redirect } from "next/navigation";
 
@@ -8,5 +9,25 @@ export default async function DashboardHomePage() {
     redirect("/sign-in");
   }
 
-  return <DashboardHome />;
+  const {
+    totalLeads,
+    newLeads,
+    contactedLeads,
+    qualifiedLeads,
+    wonLeads,
+    lostLeads,
+  } = await fetchDashboardCardStats();
+
+  return (
+    <DashboardHome
+      stats={{
+        totalLeads,
+        newLeads,
+        contactedLeads,
+        qualifiedLeads,
+        wonLeads,
+        lostLeads,
+      }}
+    />
+  );
 }
