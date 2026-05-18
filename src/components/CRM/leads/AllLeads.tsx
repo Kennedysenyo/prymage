@@ -239,7 +239,7 @@ export function AllLeads({ leads }: Props) {
               </p>
             </div>
             <Link
-              href={`/dashboard/leads/${lead.id}/details`}
+              href={`/admin/leads/${lead.id}/details`}
               className="mt-4 block w-full text-center px-4 py-2 bg-gradient-to-r from-[#5B2CA5] to-[#D4A24C] text-white rounded-lg hover:shadow-lg transition-all"
             >
               View Details
