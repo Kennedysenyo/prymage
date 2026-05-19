@@ -1,22 +1,20 @@
 "use client";
 
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-
 import * as Dialog from "@radix-ui/react-dialog";
-
 import { Trash2, Loader2 } from "lucide-react";
-
 import { motion, AnimatePresence } from "framer-motion";
-
 import { useState, useTransition } from "react";
-import { deleteLeadById } from "@/features/leads/leads.service";
 import toast from "react-hot-toast";
+import { capitalizeWord } from "@/lib/utils";
 
 type Props = {
-  leadId: string;
+  resource: string;
+  id: string;
+  deleteServerAction: (id: string) => Promise<string | null>;
 };
 
-export function DeleteLeadButton({ leadId }: Props) {
+export function DeleteButton({ resource, id, deleteServerAction }: Props) {
   const [open, setOpen] = useState(false);
 
   const [isPending, startTransition] = useTransition();
@@ -24,7 +22,7 @@ export function DeleteLeadButton({ leadId }: Props) {
   const handleDelete = () => {
     let res: string | null = null;
     startTransition(async () => {
-      res = await deleteLeadById(leadId);
+      res = await deleteServerAction(id);
 
       if (res) {
         toast.error("Delete Failed!");
@@ -52,7 +50,7 @@ export function DeleteLeadButton({ leadId }: Props) {
         "
       >
         <Trash2 size={16} />
-        Delete Lead
+        {`Delete ${capitalizeWord(resource)}`}
       </DropdownMenu.Item>
 
       {/* DIALOG */}
@@ -105,7 +103,7 @@ export function DeleteLeadButton({ leadId }: Props) {
                   "
                 >
                   <Dialog.Title className="text-xl text-gray-600 font-semibold">
-                    Delete Lead
+                    {` Delete ${capitalizeWord(resource)}`}
                   </Dialog.Title>
 
                   <Dialog.Description
@@ -113,8 +111,8 @@ export function DeleteLeadButton({ leadId }: Props) {
                       mt-2 text-sm text-gray-600
                     "
                   >
-                    Are you sure you want to delete this lead? This action
-                    cannot be undone.
+                    {`Are you sure you want to delete this ${resource}? This action
+                    cannot be undone.`}
                   </Dialog.Description>
 
                   <div className="mt-6 flex justify-end gap-3">

@@ -9,6 +9,8 @@ import {
 } from "./users.types";
 import { handleError } from "@/lib/utils";
 import { auth } from "@/lib/better-auth/auth";
+import { headers } from "next/headers";
+import { revalidatePath } from "next/cache";
 
 const createUser = async (
   userData: Omit<CreateUserFormType, "cnfrmPassword">,
@@ -55,4 +57,19 @@ export const validateCreateUserForm = async (
   }
 
   return { success: true, errors: {}, errorMessage: null };
+};
+
+export const deleteUserById = async (id: string): Promise<string | null> => {
+  try {
+    await auth.api.removeUser({
+      body: {
+        userId: id,
+      },
+      headers: await headers(),
+    });
+    revalidatePath("/admins/users");
+    return null;
+  } catch (error) {
+    return handleError(error);
+  }
 };

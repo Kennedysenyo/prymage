@@ -18,7 +18,8 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
 import { LeadsTable } from "@/features/leads/leads.types";
 import { capitalizeWord } from "@/lib/utils";
-import { DeleteLeadButton } from "./DeleteLeadButton";
+import { DeleteButton } from "../DeleteButton";
+import { deleteLeadById } from "@/features/leads/leads.service";
 
 interface Props {
   leads: LeadsTable[];
@@ -198,7 +199,11 @@ export function AllLeads({ leads }: Props) {
                             </Link>
                           </DropdownMenu.Item>
                           <DropdownMenu.Separator className="h-px bg-gray-200 my-1" />
-                          <DeleteLeadButton leadId={lead.id} />
+                          <DeleteButton
+                            resource="lead"
+                            id={lead.id}
+                            deleteServerAction={deleteLeadById}
+                          />
                         </DropdownMenu.Content>
                       </DropdownMenu.Portal>
                     </DropdownMenu.Root>
@@ -235,13 +240,16 @@ export function AllLeads({ leads }: Props) {
                 <span className="font-medium">Email:</span> {lead.email}
               </p>
               <p className="text-gray-600">
-                <span className="font-medium">Interest:</span> {lead.interest}
+                <span className="font-medium">Interest:</span>{" "}
+                {capitalizeWord(lead.interest)}
               </p>
               <p className="text-gray-600">
-                <span className="font-medium">Country:</span> {lead.country}
+                <span className="font-medium">Country:</span>{" "}
+                {capitalizeWord(lead.country)}
               </p>
               <p className="text-gray-600">
-                <span className="font-medium">Assigned:</span> {lead.assignedTo}
+                <span className="font-medium">Assigned:</span>{" "}
+                {lead.assignedUser}
               </p>
               <p className="text-gray-600">
                 <span className="font-medium">Created:</span>{" "}

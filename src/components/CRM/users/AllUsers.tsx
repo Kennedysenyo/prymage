@@ -14,6 +14,8 @@ import {
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
 import { capitalizeWord } from "@/lib/utils";
+import { DeleteButton } from "../DeleteButton";
+import { deleteUserById } from "@/features/users/users.service";
 
 interface User {
   id: string;
@@ -145,7 +147,7 @@ export function AllUsers({ users }: Props) {
                         >
                           <DropdownMenu.Item asChild>
                             <Link
-                              href={`/dashboard/users/${user.id}`}
+                              href={`/admin/users/${user.id}/details`}
                               className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer outline-none"
                             >
                               <Eye size={16} />
@@ -154,7 +156,7 @@ export function AllUsers({ users }: Props) {
                           </DropdownMenu.Item>
                           <DropdownMenu.Item asChild>
                             <Link
-                              href={`/dashboard/users/edit/${user.id}`}
+                              href={`/admin/users/${user.id}/edit`}
                               className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer outline-none"
                             >
                               <Edit size={16} />
@@ -162,10 +164,11 @@ export function AllUsers({ users }: Props) {
                             </Link>
                           </DropdownMenu.Item>
                           <DropdownMenu.Separator className="h-px bg-gray-200 my-1" />
-                          <DropdownMenu.Item className="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 cursor-pointer outline-none">
-                            <Trash2 size={16} />
-                            Delete User
-                          </DropdownMenu.Item>
+                          <DeleteButton
+                            resource="user"
+                            id={user.id}
+                            deleteServerAction={deleteUserById}
+                          />
                         </DropdownMenu.Content>
                       </DropdownMenu.Portal>
                     </DropdownMenu.Root>
@@ -220,13 +223,13 @@ export function AllUsers({ users }: Props) {
             </div>
             <div className="flex gap-2">
               <Link
-                href={`/dashboard/users/${user.id}`}
+                href={`/admin/users/${user.id}/details`}
                 className="flex-1 text-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
               >
                 View
               </Link>
               <Link
-                href={`/dashboard/users/edit/${user.id}`}
+                href={`/admin/users/${user.id}/edit`}
                 className="flex-1 text-center px-4 py-2 bg-gradient-to-r from-[#5B2CA5] to-[#D4A24C] text-white rounded-lg hover:shadow-lg transition-all"
               >
                 Edit
