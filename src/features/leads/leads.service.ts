@@ -264,7 +264,6 @@ export const deleteLeadById = async (id: string): Promise<string | null> => {
     revalidatePath("/admin/leads");
     return null;
   } catch (error) {
-    console.log(error);
     return handleError(error);
   }
 };

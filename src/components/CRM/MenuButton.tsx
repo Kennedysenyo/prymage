@@ -1,6 +1,10 @@
-import { ChevronDown } from "lucide-react";
+"use client";
+
+import { logOut } from "@/features/auth/auth.service";
+import { ChevronDown, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import toast from "react-hot-toast";
 
 interface Props {
   user:
@@ -22,6 +26,20 @@ interface Props {
 
 export const MenuButton = ({ user }: Props) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [pending, startTransition] = useTransition();
+
+  const handleLogout = () => {
+    let res: string | null = null;
+    startTransition(async () => {
+      res = await logOut();
+    });
+    if (res) {
+      toast.error(res);
+    } else {
+      toast.success("Logged out successfully!");
+    }
+  };
+
   return (
     <div className="relative">
       <button
@@ -62,12 +80,16 @@ export const MenuButton = ({ user }: Props) => {
               Settings
             </Link>
             <hr className="my-2" />
-            <Link
-              href="#"
+            <button
+              onClick={handleLogout}
               className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
             >
-              Logout
-            </Link>
+              {pending ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                "Logout"
+              )}
+            </button>
           </div>
         </>
       )}
