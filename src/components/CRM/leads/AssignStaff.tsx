@@ -83,7 +83,7 @@ export function AssignStaff({ actionBy, lead, users }: Props) {
           toast.error(res);
         } else {
           toast.success("Assigned staff successfully!");
-          router.push(`/admin/leads/${lead.id}/details`);
+          // router.push(`/admin/leads/${lead.id}/details`);
         }
       });
     }

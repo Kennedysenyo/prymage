@@ -60,9 +60,9 @@ export function AllLeads({ leads }: Props) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center px-2">
         <div className="flex-1 w-full sm:w-auto">
-          <div className="relative">
+          <div className="relative ">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
               size={20}

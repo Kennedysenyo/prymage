@@ -1,4 +1,5 @@
 import { UserDetails } from "@/components/CRM/users/UserDetails";
+import { fecthUserDetailsData } from "@/features/users/users.queries";
 import { getSession } from "@/lib/better-auth/auth-helpers";
 import { redirect } from "next/navigation";
 
@@ -13,6 +14,27 @@ export default async function UserDetailsPage({
   }
 
   const { slug } = await params;
-  return <div className="text-xl text-gray-600 pt-12">User Details Page.</div>;
-  // return <UserDetails />;
+  const {
+    userDetails,
+    wonCount,
+    lostCount,
+    activeLeadsCount,
+    userPerformanceData,
+    userLeadStageCountData,
+    userAssignedLeads,
+    userActivities,
+  } = await fecthUserDetailsData(slug);
+
+  return (
+    <UserDetails
+      userDetails={userDetails}
+      wonCount={wonCount}
+      lostCount={lostCount}
+      activeLeadsCount={activeLeadsCount}
+      userPerformanceData={userPerformanceData}
+      userLeadStageCountData={userLeadStageCountData}
+      userAssignedLeads={userAssignedLeads}
+      userActivities={userActivities}
+    />
+  );
 }

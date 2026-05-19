@@ -14,13 +14,14 @@ import {
   XCircle,
   Phone,
   ArrowLeft,
+  UserPlus,
 } from "lucide-react";
 import {
   BarChart,
   Bar,
   PieChart,
   Pie,
-  Cell,
+  Sector,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -28,109 +29,62 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import Link from "next/link";
+import { fecthUserDetailsData } from "@/features/users/users.queries";
+import { capitalizeWord } from "@/lib/utils";
+type UserDetailsDataType = Awaited<ReturnType<typeof fecthUserDetailsData>>;
+interface Props extends UserDetailsDataType {}
 
-export function UserDetails() {
-  const user = {
-    id: "1",
-    name: "John Doe",
-    email: "john@prymage.com",
-    role: "Admin",
-    phone: "+233 24 555 7890",
-    leadsAssigned: 45,
-    dateCreated: "2023-01-15",
-    avatar: "JD",
-    leadsWon: 18,
-    leadsLost: 7,
-    leadsActive: 20,
-  };
+export function UserDetails({
+  userDetails: user,
+  wonCount,
+  lostCount,
+  activeLeadsCount,
+  userPerformanceData,
+  userLeadStageCountData,
+  userAssignedLeads,
+  userActivities,
+}: Props) {
+  // const recentActivity = [
+  //   {
+  //     id: 1,
+  //     action: "Won Lead",
+  //     description: "Closed deal with Ama Osei - Royal Motors",
+  //     timestamp: "2024-05-12 3:30 PM",
+  //     icon: CheckCircle,
+  //     color: "text-green-600",
+  //   },
+  //   {
+  //     id: 2,
+  //     action: "Contacted Lead",
+  //     description: "Follow-up call with Kwame Mensah",
+  //     timestamp: "2024-05-11 10:15 AM",
+  //     icon: Phone,
+  //     color: "text-blue-600",
+  //   },
+  //   {
+  //     id: 3,
+  //     action: "Lead Assigned",
+  //     description: "New lead assigned: Abena Asante",
+  //     timestamp: "2024-05-10 2:45 PM",
+  //     icon: Briefcase,
+  //     color: "text-purple-600",
+  //   },
+  //   {
+  //     id: 4,
+  //     action: "Lost Lead",
+  //     description: "Lead declined - Budget constraints",
+  //     timestamp: "2024-05-09 11:20 AM",
+  //     icon: XCircle,
+  //     color: "text-red-600",
+  //   },
+  // ];
 
-  const assignedLeads = [
-    {
-      id: 1,
-      name: "Kwame Mensah",
-      company: "Accra Manufacturing Ltd",
-      stage: "qualified",
-      lastContact: "2024-05-16",
-    },
-    {
-      id: 2,
-      name: "Abena Asante",
-      company: "Regent University",
-      stage: "contacted",
-      lastContact: "2024-05-15",
-    },
-    {
-      id: 3,
-      name: "Kofi Agyeman",
-      company: "Ghana Telecom",
-      stage: "new",
-      lastContact: "2024-05-14",
-    },
-    {
-      id: 4,
-      name: "Ama Osei",
-      company: "Royal Motors",
-      stage: "won",
-      lastContact: "2024-05-12",
-    },
-    {
-      id: 5,
-      name: "Yaw Mensah",
-      company: "Synlab Ghana",
-      stage: "qualified",
-      lastContact: "2024-05-11",
-    },
-  ];
-
-  const recentActivity = [
-    {
-      id: 1,
-      action: "Won Lead",
-      description: "Closed deal with Ama Osei - Royal Motors",
-      timestamp: "2024-05-12 3:30 PM",
-      icon: CheckCircle,
-      color: "text-green-600",
-    },
-    {
-      id: 2,
-      action: "Contacted Lead",
-      description: "Follow-up call with Kwame Mensah",
-      timestamp: "2024-05-11 10:15 AM",
-      icon: Phone,
-      color: "text-blue-600",
-    },
-    {
-      id: 3,
-      action: "Lead Assigned",
-      description: "New lead assigned: Abena Asante",
-      timestamp: "2024-05-10 2:45 PM",
-      icon: Briefcase,
-      color: "text-purple-600",
-    },
-    {
-      id: 4,
-      action: "Lost Lead",
-      description: "Lead declined - Budget constraints",
-      timestamp: "2024-05-09 11:20 AM",
-      icon: XCircle,
-      color: "text-red-600",
-    },
-  ];
-
-  const performanceData = [
-    { month: "Jan", won: 3, lost: 1 },
-    { month: "Feb", won: 4, lost: 2 },
-    { month: "Mar", won: 2, lost: 1 },
-    { month: "Apr", won: 5, lost: 2 },
-    { month: "May", won: 4, lost: 1 },
-  ];
-
-  const leadsByStage = [
-    { name: "New", value: 5, color: "#22c55e" },
-    { name: "Contacted", value: 8, color: "#a855f7" },
-    { name: "Qualified", value: 7, color: "#6366f1" },
-    { name: "Won", value: 18, color: "#D4A24C" },
-    { name: "Lost", value: 7, color: "#ef4444" },
+  const leadsByStageColors = [
+    { name: "New", color: "#22c55e" },
+    { name: "Contacted", color: "#a855f7" },
+    { name: "Qualified", color: "#6366f1" },
+    { name: "Won", color: "#D4A24C" },
+    { name: "Lost", color: "#ef4444" },
   ];
 
   const getStageBadge = (stage: string) => {
@@ -163,7 +117,11 @@ export function UserDetails() {
         >
           <div className="text-center mb-6">
             <div className="w-24 h-24 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4">
-              {user.avatar}
+              <img
+                className="w-full h-full"
+                src={user.image ?? "/assets/default-image.png"}
+                alt={user.name ?? "Note Author"}
+              />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-1">
               {user.name}
@@ -171,12 +129,12 @@ export function UserDetails() {
             <p className="text-gray-600 mb-3">{user.email}</p>
             <span
               className={`inline-block px-4 py-2 rounded-xl text-sm font-semibold ${
-                user.role === "Admin"
+                user.role === "admin"
                   ? "bg-purple-100 text-purple-700"
                   : "bg-blue-100 text-blue-700"
               }`}
             >
-              {user.role}
+              {capitalizeWord(user.role)}
             </span>
           </div>
 
@@ -190,10 +148,10 @@ export function UserDetails() {
             </div>
 
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-              <Phone size={20} className="text-gray-400" />
+              <Briefcase size={20} className="text-gray-400" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-gray-500">Phone</p>
-                <p className="text-gray-900">{user.phone}</p>
+                <p className="text-sm text-gray-500">Position</p>
+                <p className="text-gray-900">{user.position}</p>
               </div>
             </div>
 
@@ -201,15 +159,15 @@ export function UserDetails() {
               <Shield size={20} className="text-gray-400" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-gray-500">Role</p>
-                <p className="text-gray-900">{user.role}</p>
+                <p className="text-gray-900">{capitalizeWord(user.role)}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-              <Briefcase size={20} className="text-gray-400" />
+              <UserPlus size={20} className="text-gray-400" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-gray-500">Leads Assigned</p>
-                <p className="text-gray-900 font-bold">{user.leadsAssigned}</p>
+                <p className="text-gray-900 font-bold">{user.leadsCount}</p>
               </div>
             </div>
 
@@ -217,7 +175,7 @@ export function UserDetails() {
               <Calendar size={20} className="text-gray-400" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-gray-500">Member Since</p>
-                <p className="text-gray-900">{user.dateCreated}</p>
+                <p className="text-gray-900">{user.createdAt.toDateString()}</p>
               </div>
             </div>
           </div>
@@ -244,9 +202,7 @@ export function UserDetails() {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Leads Won</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {user.leadsWon}
-                  </p>
+                  <p className="text-2xl font-bold text-gray-900">{wonCount}</p>
                 </div>
               </div>
             </motion.div>
@@ -264,7 +220,7 @@ export function UserDetails() {
                 <div>
                   <p className="text-sm text-gray-500">Leads Lost</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {user.leadsLost}
+                    {lostCount}
                   </p>
                 </div>
               </div>
@@ -283,7 +239,7 @@ export function UserDetails() {
                 <div>
                   <p className="text-sm text-gray-500">Active Leads</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {user.leadsActive}
+                    {activeLeadsCount}
                   </p>
                 </div>
               </div>
@@ -301,7 +257,7 @@ export function UserDetails() {
                 Performance
               </h3>
               <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={performanceData}>
+                <BarChart data={userPerformanceData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
@@ -324,19 +280,22 @@ export function UserDetails() {
               <ResponsiveContainer width="100%" height={250}>
                 <PieChart>
                   <Pie
-                    data={leadsByStage}
+                    data={userLeadStageCountData}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
                     label={({ name, value }) => `${name}: ${value}`}
                     outerRadius={80}
-                    fill="#8884d8"
                     dataKey="value"
-                  >
-                    {leadsByStage.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
+                    shape={(props: any) => {
+                      const { index, fill, ...rest } = props;
+
+                      const sliceColor =
+                        leadsByStageColors[index]?.color || fill;
+
+                      return <Sector {...rest} fill={sliceColor} />;
+                    }}
+                  />
                   <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
@@ -353,7 +312,7 @@ export function UserDetails() {
               Assigned Leads
             </h3>
             <div className="space-y-3">
-              {assignedLeads.map((lead, index) => (
+              {userAssignedLeads.map((lead, index) => (
                 <motion.div
                   key={lead.id}
                   initial={{ opacity: 0, x: -20 }}
@@ -371,7 +330,9 @@ export function UserDetails() {
                     >
                       {lead.stage.charAt(0).toUpperCase() + lead.stage.slice(1)}
                     </span>
-                    <p className="text-sm text-gray-500">{lead.lastContact}</p>
+                    <p className="text-sm text-gray-500">
+                      {lead.updatedAt.toLocaleDateString()}
+                    </p>
                   </div>
                 </motion.div>
               ))}
@@ -388,7 +349,7 @@ export function UserDetails() {
               Recent Activity
             </h3>
             <div className="space-y-4">
-              {recentActivity.map((activity, index) => (
+              {userActivities.map((activity, index) => (
                 <motion.div
                   key={activity.id}
                   initial={{ opacity: 0, x: -20 }}
@@ -397,20 +358,20 @@ export function UserDetails() {
                   className="flex gap-4"
                 >
                   <div
-                    className={`w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0 ${activity.color}`}
+                    className={`w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0 `}
                   >
-                    <activity.icon size={20} />
+                    {/* <activity.icon size={20} /> */}
                   </div>
                   <div className="flex-1">
                     <h4 className="font-semibold text-gray-900">
-                      {activity.action}
+                      {activity.activity}
                     </h4>
                     <p className="text-sm text-gray-600">
                       {activity.description}
                     </p>
                     <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
                       <Clock size={12} />
-                      {activity.timestamp}
+                      {activity.createdAt.toLocaleDateString()}
                     </p>
                   </div>
                 </motion.div>
