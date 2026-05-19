@@ -17,7 +17,11 @@ import { db } from "@/lib/db/db";
 import { revalidatePath } from "next/cache";
 import { desc, eq } from "drizzle-orm";
 import { user } from "@/lib/db/auth-schema";
-import { requirePermission } from "../auth/auth.authorize";
+import {
+  requirePermission,
+  requireSelfOrPermission,
+  requireSession,
+} from "../auth/auth.authorize";
 
 const createLead = async (
   data: CreateLeadsDataType,
@@ -84,6 +88,8 @@ export const validateLeadsForm = async (
 
 const addNote = async (data: CreateNoteDataType): Promise<string | null> => {
   try {
+    await requirePermission({ lead: ["comment"] });
+
     await db.transaction(async (tx) => {
       const [history] = await tx
         .select({
@@ -143,15 +149,43 @@ export const validateCreateNoteForm = async (
   return { success: true, errors: {}, errorMessage: null };
 };
 
-export const updateStage = async (
-  userId: string,
-  leadId: string,
-  currentStage: Stage,
-  newStage: Stage,
-): Promise<string | null> => {
+/**
+ * userId: -> id of user performing the action.
+ * assignedTo: -> id of user assigned to lead.
+ * leadId: -> id of lead.
+ * currentStage: -> current stage of lead.
+ * newStage: -> the new stage being updated to.
+ */
+export const updateStage = async ({
+  userId,
+  assignedTo,
+  leadId,
+  currentStage,
+  newStage,
+}: {
+  userId: string;
+  assignedTo: string | null;
+  leadId: string;
+  currentStage: Stage;
+  newStage: Stage;
+}): Promise<string | null> => {
   try {
-    // Todo: Now, everybody can update any lead. Make it so that only assigned staff can update assigned lead.
-    await requirePermission({ lead: ["update"] });
+    const session = await requireSession();
+
+    // TODO: This makes only assigned staff to update stage but also affects admin.
+    // if (assignedTo !== session.user.id) {
+    //   throw new Error("Forbidden");
+    // }
+
+    if (assignedTo) {
+      await requireSelfOrPermission(assignedTo, {
+        resource: "lead",
+        own: "update:own",
+        any: "update:any",
+      });
+    } else {
+      await requirePermission({ lead: ["update:any"] });
+    }
 
     await db.transaction(async (tx) => {
       const [updatedLead] = await tx

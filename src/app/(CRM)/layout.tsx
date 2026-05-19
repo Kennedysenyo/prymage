@@ -17,7 +17,7 @@ export default async function CRMLayout({
         <div className="lg:pl-64 pr-6">
           <DashboardNavbar userSession={session} />
           {children}
-          <Toaster position="top-right" />
+          <Toaster position="bottom-right" />
         </div>
       </SidebarProvider>
     </div>

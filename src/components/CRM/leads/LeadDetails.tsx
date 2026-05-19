@@ -77,12 +77,13 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
     let res: string | null = null;
     if (lead.stage === (selectedStage as Stage)) return;
     startTranstion(async () => {
-      res = await updateStage(
+      res = await updateStage({
         userId,
         leadId,
-        lead.stage,
-        selectedStage as Stage,
-      );
+        assignedTo: lead.assignedTo,
+        currentStage: lead.stage,
+        newStage: selectedStage as Stage,
+      });
 
       if (res) {
         toast.error(res);
