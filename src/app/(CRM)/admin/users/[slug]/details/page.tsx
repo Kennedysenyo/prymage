@@ -13,5 +13,6 @@ export default async function UserDetailsPage({
   }
 
   const { slug } = await params;
-  return <UserDetails />;
+  return <div className="text-xl text-gray-600 pt-12">User Details Page.</div>;
+  // return <UserDetails />;
 }

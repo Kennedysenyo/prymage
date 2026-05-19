@@ -125,7 +125,7 @@ export const validateEditUserForm = async (
     for (const [k, v] of Object.entries(flattenedErrors)) {
       errors = { ...errors, [k]: v[0] };
     }
-    console.log("Errors", errors);
+
     return { success: false, errors, errorMessage: null };
   }
   console.log("Success");
@@ -135,4 +135,25 @@ export const validateEditUserForm = async (
   }
 
   return { success: true, errors: {}, errorMessage: null };
+};
+
+export const toggleUserBan = async (userId: string, isBanned: boolean) => {
+  try {
+    if (isBanned) {
+      await auth.api.unbanUser({ body: { userId }, headers: await headers() });
+    } else {
+      await auth.api.banUser({
+        body: {
+          userId,
+          banReason: "Admin Decision",
+        },
+        headers: await headers(),
+      });
+    }
+    revalidatePath(`/admin/users/${userId}/edit`);
+
+    return null;
+  } catch (error) {
+    return handleError(error);
+  }
 };

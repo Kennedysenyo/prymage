@@ -59,6 +59,7 @@ export const fetchUserById = async (id: string) => {
         email: user.email,
         position: user.position,
         role: user.role,
+        banned: user.banned,
       })
       .from(user)
       .where(eq(user.id, id));

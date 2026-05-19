@@ -22,6 +22,7 @@ export const user = pgTable(
     role: rolesEnum().notNull().default("staff"),
     position: text("position").notNull(),
     banned: boolean().notNull().default(false),
+    banReason: text(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
       .defaultNow()
