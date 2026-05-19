@@ -4,7 +4,7 @@ import { adminAc, defaultStatements } from "better-auth/plugins/admin/access";
 const statements = {
   ...defaultStatements,
   user: ["create", "update:own", "update:any", "delete", "ban", "set-password"],
-  lead: ["update", "delete"],
+  lead: ["update", "delete", "assign-staff"],
 } as const;
 
 export type Resource = keyof typeof statements;
@@ -15,7 +15,7 @@ export const fullAc = createAccessControl(statements);
 export const adminRole = fullAc.newRole({
   ...adminAc.statements,
   user: ["create", "update:any", "delete", "ban", "set-password"],
-  lead: ["update", "delete"],
+  lead: ["update", "delete", "assign-staff"],
 });
 
 export const staffRole = fullAc.newRole({

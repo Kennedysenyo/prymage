@@ -14,11 +14,18 @@ import { handleError } from "@/lib/utils";
 import { auth } from "@/lib/better-auth/auth";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import {
+  requirePermission,
+  requireSelfOrPermission,
+  requireSession,
+} from "../auth/auth.authorize";
 
 const createUser = async (
   userData: Omit<CreateUserFormType, "cnfrmPassword">,
 ): Promise<string | null> => {
   try {
+    await requirePermission({ user: ["create"] });
+
     console.log("The data", userData);
     const res = await auth.api.createUser({
       body: {
@@ -64,6 +71,8 @@ export const validateCreateUserForm = async (
 
 export const deleteUserById = async (id: string): Promise<string | null> => {
   try {
+    await requirePermission({ user: ["delete"] });
+
     await auth.api.removeUser({
       body: {
         userId: id,
@@ -82,6 +91,8 @@ const updateUserById = async (
   data: EditUserDataType,
 ): Promise<string | null> => {
   try {
+    await requirePermission({ user: ["update:any"] });
+
     await auth.api.adminUpdateUser({
       body: {
         userId,
@@ -96,6 +107,7 @@ const updateUserById = async (
     });
 
     if (data.password) {
+      await requirePermission({ user: ["set-password"] });
       await auth.api.setUserPassword({
         body: {
           userId,
@@ -139,6 +151,7 @@ export const validateEditUserForm = async (
 
 export const toggleUserBan = async (userId: string, isBanned: boolean) => {
   try {
+    await requirePermission({ user: ["ban"] });
     if (isBanned) {
       await auth.api.unbanUser({ body: { userId }, headers: await headers() });
     } else {

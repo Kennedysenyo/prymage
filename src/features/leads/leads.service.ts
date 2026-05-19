@@ -17,6 +17,7 @@ import { db } from "@/lib/db/db";
 import { revalidatePath } from "next/cache";
 import { desc, eq } from "drizzle-orm";
 import { user } from "@/lib/db/auth-schema";
+import { requirePermission } from "../auth/auth.authorize";
 
 const createLead = async (
   data: CreateLeadsDataType,
@@ -149,6 +150,9 @@ export const updateStage = async (
   newStage: Stage,
 ): Promise<string | null> => {
   try {
+    // Todo: Now, everybody can update any lead. Make it so that only assigned staff can update assigned lead.
+    await requirePermission({ lead: ["update"] });
+
     await db.transaction(async (tx) => {
       const [updatedLead] = await tx
         .update(leads)
@@ -181,6 +185,8 @@ export const assignStaff = async ({
   actionBy: string;
 }): Promise<string | null> => {
   try {
+    await requirePermission({ lead: ["assign-staff"] });
+
     await db.transaction(async (tx) => {
       const [history] = await tx
         .select({
@@ -218,6 +224,8 @@ export const assignStaff = async ({
 
 export const deleteLeadById = async (id: string): Promise<string | null> => {
   try {
+    await requirePermission({ lead: ["delete"] });
+
     await db.delete(leads).where(eq(leads.id, id));
     revalidatePath("/admin/leads");
     return null;
