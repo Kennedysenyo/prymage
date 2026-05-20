@@ -14,21 +14,11 @@ export const aj = arcjet({
       allow: [],
     }),
 
-    // Rule A: Global IP-based rate limit for the sign-in form
     tokenBucket({
       mode: "LIVE",
       characteristics: ["ip.src"],
-      capacity: 10, // 10 total sign-in attempts per IP
+      capacity: 10,
       refillRate: 10,
-      interval: "60s",
-    }),
-
-    // Rule B: Targeted email-based brute-force limit
-    tokenBucket({
-      mode: "LIVE",
-      characteristics: ["email"], // Tracks specifically by the "email" string you pass
-      capacity: 3, // Only 3 attempts allowed for a single email address
-      refillRate: 3,
       interval: "60s",
     }),
   ],

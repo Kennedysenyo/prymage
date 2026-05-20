@@ -25,26 +25,48 @@ import { handleError } from "@/lib/utils";
 import { auth } from "@/lib/better-auth/auth";
 import { cookies, headers } from "next/headers";
 import { aj } from "@/lib/arcjet/arcjet";
-import { request } from "@arcjet/next";
+import { request, tokenBucket } from "@arcjet/next";
 
 const signIn = async (user: UserSignInDataType): Promise<string | null> => {
   try {
+    const targetEmail = user?.email?.toLowerCase().trim();
+    if (!targetEmail) {
+      throw new Error("Email address is required.");
+    }
+
     const req = await request();
 
-    const decision = await aj.protect(req, {
-      email: user.email,
+    const globalDecision = await aj.protect(req, { requested: 1 });
+    if (globalDecision.isDenied()) {
+      if (globalDecision.reason.isBot())
+        throw new Error("Bots are not allowed");
+      if (globalDecision.reason.isRateLimit())
+        throw new Error("Too many requests from this location.");
+      throw new Error("Forbidden");
+    }
+
+    const emailLimiter = aj.withRule(
+      tokenBucket({
+        mode: "LIVE",
+        characteristics: ["email"],
+        capacity: 3,
+        refillRate: 3,
+        interval: "60s",
+      }),
+    );
+
+    const emailDecision = await emailLimiter.protect(req, {
+      email: targetEmail,
       requested: 1,
     });
 
-    console.log(decision);
-    if (decision.isDenied()) {
-      if (decision.reason.isBot()) {
-        throw new Error("Bots are not allowed");
-      } else if (decision.reason.isRateLimit()) {
-        throw new Error("Too many requests. Try again later.");
-      } else {
-        throw new Error("Forbidden");
+    if (emailDecision.isDenied()) {
+      if (emailDecision.reason.isRateLimit()) {
+        throw new Error(
+          "Too many sign-in attempts for this email. Try again later.",
+        );
       }
+      throw new Error("Forbidden");
     }
 
     await auth.api.signInEmail({ body: user, headers: await headers() });
