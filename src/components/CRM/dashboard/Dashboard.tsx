@@ -26,25 +26,32 @@ import {
   Legend,
   ResponsiveContainer,
   PieLabel,
+  Sector,
 } from "recharts";
+import { fetchDashboardData } from "@/features/leads/leads.queries";
 
-interface Props {
-  stats: {
-    totalLeads: number;
-    newLeads: number;
-    contactedLeads: number;
-    qualifiedLeads: number;
-    wonLeads: number;
-    lostLeads: number;
-  };
-}
+type DashboardData = Awaited<ReturnType<typeof fetchDashboardData>>;
 
-export default function DashboardHome({ stats }: Props) {
+interface Props extends DashboardData {}
+
+export default function DashboardHome({
+  totalLeads,
+  newLeads,
+  contactedLeads,
+  qualifiedLeads,
+  wonLeads,
+  lostLeads,
+  leadStageData,
+  leadsByCountryData,
+  monthlyGrowthData,
+  staffAssignmentsData,
+  convrsionRate,
+}: Props) {
   const statsStyles = [
     {
       icon: Briefcase,
       label: "Total Leads",
-      value: stats.totalLeads,
+      value: totalLeads,
       change: "+12.5%",
       trend: "up",
       color: "from-blue-500 to-blue-600",
@@ -52,7 +59,7 @@ export default function DashboardHome({ stats }: Props) {
     {
       icon: UserPlus,
       label: "New Leads",
-      value: stats.newLeads,
+      value: newLeads,
       change: "+23.1%",
       trend: "up",
       color: "from-green-500 to-green-600",
@@ -60,7 +67,7 @@ export default function DashboardHome({ stats }: Props) {
     {
       icon: Phone,
       label: "Contacted",
-      value: stats.contactedLeads,
+      value: contactedLeads,
       change: "+8.2%",
       trend: "up",
       color: "from-purple-500 to-purple-600",
@@ -68,7 +75,7 @@ export default function DashboardHome({ stats }: Props) {
     {
       icon: CheckCircle,
       label: "Qualified",
-      value: stats.qualifiedLeads,
+      value: qualifiedLeads,
       change: "+15.3%",
       trend: "up",
       color: "from-indigo-500 to-indigo-600",
@@ -76,7 +83,7 @@ export default function DashboardHome({ stats }: Props) {
     {
       icon: TrendingUp,
       label: "Won Leads",
-      value: stats.wonLeads,
+      value: wonLeads,
       change: "+18.7%",
       trend: "up",
       color: "from-[#D4A24C] to-yellow-600",
@@ -84,43 +91,19 @@ export default function DashboardHome({ stats }: Props) {
     {
       icon: XCircle,
       label: "Lost Leads",
-      value: stats.lostLeads,
+      value: lostLeads,
       change: "-5.4%",
       trend: "down",
       color: "from-red-500 to-red-600",
     },
   ];
 
-  const leadsByStage = [
-    { name: "New", value: 89, color: "#22c55e" },
-    { name: "Contacted", value: 324, color: "#a855f7" },
-    { name: "Qualified", value: 156, color: "#6366f1" },
-    { name: "Won", value: 67, color: "#D4A24C" },
-    { name: "Lost", value: 43, color: "#ef4444" },
-  ];
-
-  const leadsByCountry = [
-    { name: "Ghana", leads: 687 },
-    { name: "Nigeria", leads: 423 },
-    { name: "Kenya", leads: 87 },
-    { name: "South Africa", leads: 50 },
-  ];
-
-  const monthlyGrowth = [
-    { month: "Jan", leads: 65 },
-    { month: "Feb", leads: 78 },
-    { month: "Mar", leads: 90 },
-    { month: "Apr", leads: 112 },
-    { month: "May", leads: 134 },
-    { month: "Jun", leads: 156 },
-  ];
-
-  const staffAssignments = [
-    { name: "John Doe", leads: 45 },
-    { name: "Jane Smith", leads: 38 },
-    { name: "Mike Johnson", leads: 32 },
-    { name: "Sarah Wilson", leads: 28 },
-    { name: "David Brown", leads: 24 },
+  const leadsByStageColors = [
+    { name: "New", color: "#22c55e" },
+    { name: "Contacted", color: "#a855f7" },
+    { name: "Qualified", color: "#6366f1" },
+    { name: "Won", color: "#D4A24C" },
+    { name: "Lost", color: "#ef4444" },
   ];
 
   return (
@@ -164,7 +147,7 @@ export default function DashboardHome({ stats }: Props) {
         ))}
       </div>
 
-      {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -174,30 +157,31 @@ export default function DashboardHome({ stats }: Props) {
           <h3 className="text-xl font-bold text-gray-900 mb-6">
             Leads by Stage
           </h3>
+
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
-                data={leadsByStage}
+                data={leadStageData}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ name, percent }) =>
-                  `${name} ${(percent ?? 0 * 100).toFixed(0)}%`
-                }
+                label={({ name, value }) => `${name}: ${value}`}
                 outerRadius={100}
-                fill="#8884d8"
                 dataKey="value"
-              >
-                {leadsByStage.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
+                shape={(props: any) => {
+                  const { index, fill, ...rest } = props;
+
+                  const sliceColor = leadsByStageColors[index]?.color || fill;
+
+                  return <Sector {...rest} fill={sliceColor} />;
+                }}
+              />
               <Tooltip />
             </PieChart>
           </ResponsiveContainer>
-        </motion.div> */}
+        </motion.div>
 
-      {/* <motion.div
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.5 }}
@@ -207,7 +191,7 @@ export default function DashboardHome({ stats }: Props) {
             Leads by Country
           </h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={leadsByCountry}>
+            <BarChart data={leadsByCountryData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
@@ -216,9 +200,9 @@ export default function DashboardHome({ stats }: Props) {
             </BarChart>
           </ResponsiveContainer>
         </motion.div>
-      </div> */}
+      </div>
 
-      {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -229,7 +213,7 @@ export default function DashboardHome({ stats }: Props) {
             Monthly Lead Growth
           </h3>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={monthlyGrowth}>
+            <LineChart data={monthlyGrowthData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
@@ -256,7 +240,7 @@ export default function DashboardHome({ stats }: Props) {
             Assigned Leads Per Staff
           </h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={staffAssignments} layout="vertical">
+            <BarChart data={staffAssignmentsData} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis type="number" />
               <YAxis dataKey="name" type="category" width={100} />
@@ -265,9 +249,9 @@ export default function DashboardHome({ stats }: Props) {
             </BarChart>
           </ResponsiveContainer>
         </motion.div>
-      </div> */}
+      </div>
 
-      {/* <motion.div
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6, duration: 0.5 }}
@@ -280,18 +264,18 @@ export default function DashboardHome({ stats }: Props) {
               Overall lead-to-customer conversion
             </p>
             <div className="flex items-baseline gap-2">
-              <span className="text-5xl font-bold">24.3%</span>
-              <span className="text-green-300 flex items-center gap-1">
+              <span className="text-5xl font-bold">{convrsionRate}%</span>
+              {/* <span className="text-green-300 flex items-center gap-1">
                 <TrendingUp size={20} />
                 +3.2%
-              </span>
+              </span> */}
             </div>
           </div>
           <div className="w-32 h-32 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
             <Users size={64} className="text-white" />
           </div>
         </div>
-      </motion.div> */}
+      </motion.div>
     </div>
   );
 }

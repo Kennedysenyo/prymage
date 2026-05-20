@@ -3,7 +3,7 @@
 import { user } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/db";
 import { leadNote, leads, leadStageHistory } from "@/lib/db/schema";
-import { and, asc, count, desc, eq, ne, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, isNotNull, ne, or, sql } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { fetchAllUsers } from "../users/users.queries";
 import { handleError } from "@/lib/utils";
@@ -174,7 +174,145 @@ export const fetchLostLeads = async () => {
   return Number(result.count);
 };
 
-export const fetchDashboardCardStats = async () => {
+const fetchLeadsStageData = async () => {
+  try {
+    const [result] = await db
+      .select({
+        new: sql<number>`
+        COUNT(*) FILTER (
+          WHERE ${leads.stage} = 'new'
+        )
+      `,
+
+        contacted: sql<number>`
+        COUNT(*) FILTER (
+          WHERE ${leads.stage} = 'contacted'
+        )
+      `,
+
+        qualified: sql<number>`
+        COUNT(*) FILTER (
+          WHERE ${leads.stage} = 'qualified'
+        )
+      `,
+
+        won: sql<number>`
+        COUNT(*) FILTER (
+          WHERE ${leads.stage} = 'won'
+        )
+      `,
+
+        lost: sql<number>`
+        COUNT(*) FILTER (
+          WHERE ${leads.stage} = 'lost'
+        )
+      `,
+      })
+
+      .from(leads);
+
+    return [
+      {
+        name: "New",
+        value: Number(result.new),
+      },
+
+      {
+        name: "Contacted",
+        value: Number(result.contacted),
+      },
+
+      {
+        name: "Qualified",
+        value: Number(result.qualified),
+      },
+
+      {
+        name: "Won",
+        value: Number(result.won),
+      },
+
+      {
+        name: "Lost",
+        value: Number(result.lost),
+      },
+    ];
+  } catch (error) {
+    throw new Error(handleError(error));
+  }
+};
+
+const fetchLeadsByCountryData = async () => {
+  try {
+    const leadsByCountryData = await db
+      .select({
+        name: leads.country,
+        leads: sql<number>`count(${leads.id})`,
+      })
+      .from(leads)
+      .where(isNotNull(leads.country))
+      .groupBy(leads.country);
+    return leadsByCountryData;
+  } catch (error) {
+    throw new Error(handleError(error));
+  }
+};
+
+const fetchMonthlyGrowthData = async () => {
+  try {
+    const monthlyGrowthData = await db
+      .select({
+        month: sql<string>`to_char(date_trunc('month', ${leads.createdAt}), 'Mon')`,
+        leads: sql<number>`count(${leads.id})`,
+      })
+      .from(leads)
+      .groupBy(sql`date_trunc('month', ${leads.createdAt})`)
+      .orderBy(sql`date_trunc('month', ${leads.createdAt})`);
+    return monthlyGrowthData;
+  } catch (error) {
+    throw new Error(handleError(error));
+  }
+};
+
+const fetchStaffAssignmentsData = async () => {
+  try {
+    const staffAssignmentsData = await db
+      .select({
+        name: user.name,
+        leads: sql<number>`count(${leads.id})`,
+      })
+      .from(leads)
+      .innerJoin(user, sql`${leads.assignedTo} = ${user.id}`)
+      .groupBy(user.name)
+      .orderBy(sql`count(${leads.id}) desc`);
+    return staffAssignmentsData;
+  } catch (error) {
+    throw new Error(handleError(error));
+  }
+};
+
+const fetchConversionRate = async () => {
+  const convrsionRate = await db
+    .select({
+      total: sql<number>`count(*)`,
+      converted: sql<number>`count(case when ${leads.stage} = 'won' then 1 end)`,
+    })
+    .from(leads);
+
+  const total = Number(convrsionRate[0]?.total ?? 0);
+  const converted = Number(convrsionRate[0]?.converted ?? 0);
+
+  const rate = total > 0 ? (converted / total) * 100 : 0;
+
+  // return {
+  //   total,
+  //   converted,
+  //   rate: Number(rate.toFixed(2)),
+  // };
+  return Number(rate.toFixed(2));
+};
+
+export const fetchDashboardData = async () => {
   const [
     totalLeads,
     newLeads,
@@ -182,6 +320,11 @@ export const fetchDashboardCardStats = async () => {
     qualifiedLeads,
     wonLeads,
     lostLeads,
+    leadStageData,
+    leadsByCountryData,
+    monthlyGrowthData,
+    staffAssignmentsData,
+    convrsionRate,
   ] = await Promise.all([
     fetchTotalLeadsCount(),
     fetchNewLeadsCount(),
@@ -189,6 +332,11 @@ export const fetchDashboardCardStats = async () => {
     fetchQualifiedLeadsCount(),
     fetchWonLeadsCount(),
     fetchLostLeads(),
+    fetchLeadsStageData(),
+    fetchLeadsByCountryData(),
+    fetchMonthlyGrowthData(),
+    fetchStaffAssignmentsData(),
+    fetchConversionRate(),
   ]);
   return {
     totalLeads,
@@ -197,6 +345,11 @@ export const fetchDashboardCardStats = async () => {
     qualifiedLeads,
     wonLeads,
     lostLeads,
+    leadStageData,
+    leadsByCountryData,
+    monthlyGrowthData,
+    staffAssignmentsData,
+    convrsionRate,
   };
 };
 
