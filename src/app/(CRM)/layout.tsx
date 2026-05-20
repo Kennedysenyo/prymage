@@ -3,7 +3,6 @@ import { Sidebar } from "@/components/CRM/Sidebar";
 import { getSession } from "@/lib/better-auth/auth-helpers";
 import { SidebarProvider } from "@/providers/SidebarProvider";
 import { ReactNode } from "react";
-import { Toaster } from "react-hot-toast";
 
 export default async function CRMLayout({
   children,
@@ -17,7 +16,6 @@ export default async function CRMLayout({
         <div className="lg:pl-68 pr-4">
           <DashboardNavbar userSession={session} />
           {children}
-          <Toaster position="bottom-right" />
         </div>
       </SidebarProvider>
     </div>

@@ -106,7 +106,7 @@ export const validateSignInForm = async (
 
 // --------Forgot Password
 
-const sendOtp = async (
+export const sendOtp = async (
   data: ForgotPasswordDataType,
 ): Promise<string | null> => {
   try {

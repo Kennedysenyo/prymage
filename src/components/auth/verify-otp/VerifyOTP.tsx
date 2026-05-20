@@ -7,6 +7,8 @@ import Link from "next/link";
 import { VerifyOTPFormResponseType } from "@/features/auth/auth.types";
 import { validateVerifyOTPForm } from "@/features/auth/auth.service";
 import { useRouter } from "next/navigation";
+import { useResendOTP } from "@/hooks/useResendOTP";
+import { cn } from "@/lib/utils";
 
 interface Props {
   email: string;
@@ -17,6 +19,8 @@ export function VerifyOTP({ email, type }: Props) {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const { state: resendOTPState, handleResendOTP } = useResendOTP();
 
   useEffect(() => {
     inputRefs.current[0]?.focus();
@@ -68,6 +72,18 @@ export function VerifyOTP({ email, type }: Props) {
   );
 
   useEffect(() => {
+    if (resendOTPState.error) {
+      setError(resendOTPState.error);
+    }
+  }, [resendOTPState.error]);
+
+  useEffect(() => {
+    if (state.errorMessage) {
+      setError(state.errorMessage);
+    }
+  }, [state.errorMessage]);
+
+  useEffect(() => {
     if (state.success) {
       setOtp(["", "", "", "", "", ""]);
       router.replace("/set-new-password");
@@ -104,10 +120,8 @@ export function VerifyOTP({ email, type }: Props) {
             <p className="text-gray-300">
               We've sent a 6-digit verification code to your email address.
             </p>
-            {state.errorMessage && (
-              <p className="text-red-400 text-xs text-center">
-                {state.errorMessage}
-              </p>
+            {error && (
+              <p className="text-red-400 text-xs text-center">{error}</p>
             )}
           </div>
 
@@ -156,9 +170,17 @@ export function VerifyOTP({ email, type }: Props) {
               </p>
               <button
                 type="button"
-                className="text-[#D4A24C] hover:text-yellow-400 transition-colors text-sm"
+                onClick={() => handleResendOTP(email)}
+                className={cn(
+                  "text-[#D4A24C] hover:text-yellow-400 transition-colors text-sm",
+                  resendOTPState.loading && "pointer-events-none",
+                )}
               >
-                Resend Code
+                {resendOTPState.loading ? (
+                  <Loader2 size={14} className="animate-spin mx-auto" />
+                ) : (
+                  "Resend Code"
+                )}
               </button>
             </div>
 
