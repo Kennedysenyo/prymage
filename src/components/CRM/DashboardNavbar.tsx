@@ -9,12 +9,12 @@ import { useSidarState } from "@/hooks/useSidebarState";
 import { SessionType } from "@/types/global";
 
 const pageTitles: Record<string, string> = {
-  "/dashboard": "Dashboard Overview",
-  "/dashboard/leads": "Leads Management",
-  "/dashboard/users": "Users Management",
-  "/dashboard/users/add": "Add New User",
-  "/dashboard/analytics": "Analytics",
-  "/dashboard/settings": "Settings",
+  "/admin/dashboard": "Dashboard Overview",
+  "/admin/leads": "Leads Management",
+  "/admin/users": "Users Management",
+  "/admin/users/add": "Add New User",
+  "/admin/analytics": "Analytics",
+  "/admin/settings": "Settings",
 };
 
 interface Props {
@@ -25,14 +25,15 @@ export function DashboardNavbar({ userSession: session }: Props) {
   const { handleOpen: onMenuClick } = useSidarState();
 
   const pathname = usePathname();
+
   const getPageTitle = () => {
-    if (pathname.match(/\/dashboard\/leads\/\d+/)) {
+    if (pathname.match(/^\/admin\/leads\/[^/]+$/)) {
       return "Lead Details";
     }
-    if (pathname.match(/\/dashboard\/users\/edit\/\d+/)) {
+    if (pathname.match(/^\/admin\/users\/[^/]+\/edit$/)) {
       return "Edit User";
     }
-    if (pathname.match(/\/dashboard\/users\/\d+/)) {
+    if (pathname.match(/^\/admin\/users\/[^/]+\/details$/)) {
       return "User Details";
     }
     return pageTitles[pathname] || "Dashboard";

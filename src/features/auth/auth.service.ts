@@ -24,9 +24,25 @@ import {
 import { handleError } from "@/lib/utils";
 import { auth } from "@/lib/better-auth/auth";
 import { cookies, headers } from "next/headers";
+import { aj } from "@/lib/arcjet/arcjet";
+import { request } from "@arcjet/next";
 
 const signIn = async (user: UserSignInDataType): Promise<string | null> => {
   try {
+    const req = await request();
+    const decision = await aj.protect(req, {
+      requested: 1,
+    });
+    if (decision.isDenied()) {
+      if (decision.reason.isBot()) {
+        throw new Error("Bots are not allowed");
+      } else if (decision.reason.isRateLimit()) {
+        throw new Error("Too many requests. Try again later.");
+      } else {
+        throw new Error("Forbidden");
+      }
+    }
+
     await auth.api.signInEmail({ body: user, headers: await headers() });
     return null;
   } catch (error) {
