@@ -22,6 +22,8 @@ import {
   requireSelfOrPermission,
   requireSession,
 } from "../auth/auth.authorize";
+import { sendEmail } from "../emails/emails.service";
+import { fetchAdminEmails } from "../users/users.queries";
 
 const createLead = async (
   data: CreateLeadsDataType,
@@ -40,6 +42,26 @@ const createLead = async (
         activity: "Lead Created",
       });
     });
+
+    const adminEmails = await fetchAdminEmails();
+
+    const domain = process.env.BETTER_AUTH_URL;
+    if (!domain) {
+      console.error("BETTER_AUTH_URL is required to send Email");
+    }
+    const dashboardUrl = `${domain}/admin/dashboard`;
+
+    await sendEmail(
+      {
+        type: "New-Lead",
+        leadName: data.name,
+        company: data.company,
+        email: data.email,
+        interest: data.interest,
+        dashboardUrl,
+      },
+      adminEmails,
+    );
 
     return null;
   } catch (error) {
@@ -221,7 +243,7 @@ export const assignStaff = async ({
   try {
     await requirePermission({ lead: ["assign-staff"] });
 
-    await db.transaction(async (tx) => {
+    const { staff, updatedLead } = await db.transaction(async (tx) => {
       const [history] = await tx
         .select({
           oldStage: leadStageHistory.oldStage,
@@ -231,12 +253,16 @@ export const assignStaff = async ({
         .where(eq(leadStageHistory.leadId, leadId))
         .orderBy(desc(leadStageHistory.createdAt))
         .limit(1);
-      await tx
+      const [updatedLead] = await tx
         .update(leads)
         .set({ assignedTo: staffId })
-        .where(eq(leads.id, leadId));
+        .where(eq(leads.id, leadId))
+        .returning();
       const [staff] = await tx
-        .select({ name: user.name })
+        .select({
+          name: user.name,
+          email: user.email,
+        })
         .from(user)
         .where(eq(user.id, staffId));
       await tx.insert(leadStageHistory).values({
@@ -247,7 +273,26 @@ export const assignStaff = async ({
         description: staff.name,
         activity: "Assigned Staff",
       });
+
+      return { staff, updatedLead };
     });
+
+    const domain = process.env.BETTER_AUTH_URL;
+    if (!domain) {
+      console.error("BETTER_AUTH_URL is required to send Email");
+    }
+    const dashboardUrl = `${domain}/admin/dashboard`;
+
+    await sendEmail(
+      {
+        type: "Lead-Assigned",
+        name: staff.name,
+        leadName: updatedLead.name,
+        leadMessage: updatedLead.message,
+        dashboardUrl,
+      },
+      staff.email,
+    );
 
     revalidatePath(`/admin/leads/${leadId}/assign-staff`);
     return null;

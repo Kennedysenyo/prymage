@@ -149,3 +149,16 @@ export const fecthUserDetailsData = async (id: string) => {
     userActivities,
   };
 };
+
+export const fetchAdminEmails = async () => {
+  try {
+    const res = await db
+      .select({ email: user.email })
+      .from(user)
+      .where(eq(user.role, "admin"));
+    const emails = res.map((email) => email.email);
+    return emails;
+  } catch (error) {
+    throw new Error(handleError(error));
+  }
+};

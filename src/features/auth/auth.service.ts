@@ -26,6 +26,7 @@ import { auth } from "@/lib/better-auth/auth";
 import { cookies, headers } from "next/headers";
 import { aj } from "@/lib/arcjet/arcjet";
 import { request, tokenBucket } from "@arcjet/next";
+import { sendEmail } from "../emails/emails.service";
 
 const signIn = async (user: UserSignInDataType): Promise<string | null> => {
   try {
@@ -231,6 +232,14 @@ const setNewPassword = async (
 ): Promise<string | null> => {
   try {
     await auth.api.resetPasswordEmailOTP({ body: data });
+
+    await sendEmail(
+      {
+        type: "PasswordChangeConfirmation",
+        supportEmail: "support@kencoding.dev",
+      },
+      data.email,
+    );
 
     return null;
   } catch (error) {

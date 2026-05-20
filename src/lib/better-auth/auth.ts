@@ -5,6 +5,7 @@ import { authSchemas } from "../db/schema";
 import { admin, emailOTP } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { adminRole, fullAc, staffRole } from "@/features/auth/auth.permissions";
+import { sendEmail } from "@/features/emails/emails.service";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -32,8 +33,8 @@ export const auth = betterAuth({
         } else if (type === "email-verification") {
           // Send the OTP for email verification
         } else {
-          console.log({ email, otp });
-          // Send the OTP for password reset
+          // console.log({ email, otp });
+          await sendEmail({ type: "OTP", otp }, email);
         }
       },
     }),

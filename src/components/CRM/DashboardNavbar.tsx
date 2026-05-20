@@ -1,9 +1,9 @@
 "use client";
 
-import { Menu, Search, Bell, ChevronDown } from "lucide-react";
+import { Menu, Search, Bell } from "lucide-react";
 
 import { MenuButton } from "./MenuButton";
-import { authClient } from "@/lib/better-auth/auth-client";
+
 import { usePathname } from "next/navigation";
 import { useSidarState } from "@/hooks/useSidebarState";
 import { SessionType } from "@/types/global";
@@ -27,7 +27,7 @@ export function DashboardNavbar({ userSession: session }: Props) {
   const pathname = usePathname();
 
   const getPageTitle = () => {
-    if (pathname.match(/^\/admin\/leads\/[^/]+$/)) {
+    if (pathname.match(/^\/admin\/leads\/[^/]+\/details$/)) {
       return "Lead Details";
     }
     if (pathname.match(/^\/admin\/users\/[^/]+\/edit$/)) {

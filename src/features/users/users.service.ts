@@ -14,11 +14,9 @@ import { handleError } from "@/lib/utils";
 import { auth } from "@/lib/better-auth/auth";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
-import {
-  requirePermission,
-  requireSelfOrPermission,
-  requireSession,
-} from "../auth/auth.authorize";
+import { requirePermission } from "../auth/auth.authorize";
+import { sendEmail } from "../emails/emails.service";
+import { user } from "@/lib/db/auth-schema";
 
 const createUser = async (
   userData: Omit<CreateUserFormType, "cnfrmPassword">,
@@ -26,13 +24,27 @@ const createUser = async (
   try {
     await requirePermission({ user: ["create"] });
 
-    console.log("The data", userData);
-    const res = await auth.api.createUser({
+    await auth.api.createUser({
       body: {
         ...userData,
         data: { emailVerified: true, position: userData.position },
       },
     });
+    const domain = process.env.BETTER_AUTH_URL;
+    if (!domain) {
+      console.error("BETTER_AUTH_URL is required to send Email");
+    }
+    const loginUrl = `${domain}/sign-in`;
+
+    await sendEmail(
+      {
+        type: "Welcome",
+        name: userData.name,
+        temporaryPassword: userData.password,
+        loginUrl,
+      },
+      userData.email,
+    );
 
     return null;
   } catch (error) {
