@@ -7,20 +7,28 @@ if (!arcjetKey) {
 
 export const aj = arcjet({
   key: arcjetKey,
-
   rules: [
     shield({ mode: "LIVE" }),
-
     detectBot({
       mode: "LIVE",
       allow: [],
     }),
 
+    // Rule A: Global IP-based rate limit for the sign-in form
     tokenBucket({
       mode: "LIVE",
-      characteristics: ["userId", "ip.src"],
-      capacity: 1,
-      refillRate: 0,
+      characteristics: ["ip.src"],
+      capacity: 10, // 10 total sign-in attempts per IP
+      refillRate: 10,
+      interval: "60s",
+    }),
+
+    // Rule B: Targeted email-based brute-force limit
+    tokenBucket({
+      mode: "LIVE",
+      characteristics: ["email"], // Tracks specifically by the "email" string you pass
+      capacity: 3, // Only 3 attempts allowed for a single email address
+      refillRate: 3,
       interval: "60s",
     }),
   ],
