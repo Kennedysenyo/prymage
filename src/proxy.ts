@@ -4,7 +4,7 @@ import { auth } from "@/lib/better-auth/auth";
 const authRoutes = [
   "/sign-in",
   "/forgot-password",
-  "/verify-email",
+  "/verify-otp",
   "/set-new-password",
 ];
 
