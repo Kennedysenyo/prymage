@@ -30,9 +30,12 @@ import { request } from "@arcjet/next";
 const signIn = async (user: UserSignInDataType): Promise<string | null> => {
   try {
     const req = await request();
+
     const decision = await aj.protect(req, {
       requested: 1,
     });
+
+    console.log(decision);
     if (decision.isDenied()) {
       if (decision.reason.isBot()) {
         throw new Error("Bots are not allowed");
