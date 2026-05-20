@@ -32,6 +32,7 @@ const signIn = async (user: UserSignInDataType): Promise<string | null> => {
     const req = await request();
 
     const decision = await aj.protect(req, {
+      userId: false,
       requested: 1,
     });
 

@@ -85,7 +85,7 @@ export const MenuButton = ({ user }: Props) => {
               className="block px-4 py-2 w-full text-sm text-red-600 hover:bg-gray-100"
             >
               {pending ? (
-                <Loader2 size={18} className="animate-spin" />
+                <Loader2 size={18} className="animate-spin mx-auto" />
               ) : (
                 "Logout"
               )}

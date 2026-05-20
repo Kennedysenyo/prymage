@@ -18,7 +18,7 @@ export const aj = arcjet({
 
     tokenBucket({
       mode: "LIVE",
-      characteristics: ["ip.src"],
+      characteristics: ["userId", "ip.src"],
       capacity: 1,
       refillRate: 0,
       interval: "60s",
