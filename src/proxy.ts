@@ -5,7 +5,7 @@ const authRoutes = [
   "/sign-in",
   "/forgot-password",
   "/verify-email",
-  "/set-new-passwords",
+  "/set-new-password",
 ];
 
 export async function proxy(request: NextRequest) {
