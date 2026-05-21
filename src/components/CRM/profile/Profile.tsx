@@ -110,6 +110,12 @@ export function Profile({ user, monthlyPerformance }: Props) {
     initialStatePasswordChangeState,
   );
 
+  useEffect(() => {
+    if (changePasswordFormState.success) {
+      toast.success("Password changed successfully!");
+    }
+  }, [changePasswordFormState.success]);
+
   const [notifications, setNotifications] = useState({
     emailLeads: true,
     emailReports: true,
