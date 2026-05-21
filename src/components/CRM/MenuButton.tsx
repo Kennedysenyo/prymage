@@ -74,12 +74,12 @@ export const MenuButton = ({ user }: Props) => {
             >
               Profile
             </Link>
-            <Link
+            {/* <Link
               href="#"
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
             >
               Settings
-            </Link>
+            </Link> */}
             <hr className="my-2" />
             <button
               onClick={handleLogout}
