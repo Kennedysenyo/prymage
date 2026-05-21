@@ -315,7 +315,7 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
               >
                 <div className="w-10 h-10 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
                   <img
-                    className="w-full h-full"
+                    className="w-full h-full rounded-full"
                     src={note.authorImage ?? "/assets/default-image.png"}
                     alt={note.authorName ?? "Note Author"}
                   />

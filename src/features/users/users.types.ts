@@ -1,5 +1,12 @@
 import z from "zod";
-import { createUserSchema, editUserSchema } from "./users.schemas";
+import {
+  createUserSchema,
+  editUserSchema,
+  profileInsertSchema,
+} from "./users.schemas";
+import { fetchUserProfileData } from "./users.queries";
+
+// ---------Create User
 
 export type CreateUserFormType = z.infer<typeof createUserSchema>;
 
@@ -11,6 +18,8 @@ export type CreateUserFormResponseType = {
   errorMessage: string | null;
 };
 
+// -----------Edit User
+
 export type EditUserDataType = z.infer<typeof editUserSchema>;
 
 export type EditUserFormFieldErrors = Partial<EditUserDataType>;
@@ -19,4 +28,18 @@ export type EditUserFormResponseType = {
   success: boolean;
   errors: EditUserFormFieldErrors;
   errorMessage: string | null;
+};
+
+// ------------Profile Data
+
+export type UserProfileData = Awaited<ReturnType<typeof fetchUserProfileData>>;
+
+export type UserProfileUpdateData = z.infer<typeof profileInsertSchema>;
+
+export type UserProfileUpdateFormFieldsError = Partial<UserProfileUpdateData>;
+
+export type UserProfileUpdateFormResponseType = {
+  success: boolean;
+  errorMessage: string | null;
+  errors: UserProfileUpdateFormFieldsError;
 };

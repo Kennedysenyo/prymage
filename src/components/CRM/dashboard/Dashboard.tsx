@@ -29,6 +29,7 @@ import {
   Sector,
 } from "recharts";
 import { fetchDashboardData } from "@/features/leads/leads.queries";
+import { capitalizeWord } from "@/lib/utils";
 
 type DashboardData = Awaited<ReturnType<typeof fetchDashboardData>>;
 
@@ -191,7 +192,12 @@ export default function DashboardHome({
             Leads by Country
           </h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={leadsByCountryData}>
+            <BarChart
+              data={leadsByCountryData.map((lead) => ({
+                ...lead,
+                name: capitalizeWord(lead.name),
+              }))}
+            >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />

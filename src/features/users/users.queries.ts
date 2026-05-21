@@ -4,7 +4,7 @@ import { user } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/db";
 import { leads, leadStageHistory } from "@/lib/db/schema";
 import { handleError } from "@/lib/utils";
-import { count, desc, eq } from "drizzle-orm";
+import { count, desc, eq, sql } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import {
   fetchAssignedLeadsById,
@@ -83,6 +83,7 @@ export const fetchUserDetailsById = async (id: string) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
         image: user.image,
         role: user.role,
         position: user.position,
@@ -160,5 +161,37 @@ export const fetchAdminEmails = async () => {
     return emails;
   } catch (error) {
     throw new Error(handleError(error));
+  }
+};
+
+export const fetchUserProfileData = async (id: string) => {
+  try {
+    const [data] = await db
+      .select({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        phone: user.phone,
+        image: user.image,
+        createdAt: user.createdAt,
+        totalLeads: count(leads.id),
+        totalWonLeads: sql<number>`
+          COUNT(
+            CASE
+              WHEN ${leads.stage} = 'won'
+              THEN 1
+            END
+          )
+        `,
+      })
+      .from(user)
+      .leftJoin(leads, eq(leads.assignedTo, user.id))
+      .where(eq(user.id, id))
+      .groupBy(user.id);
+
+    return data;
+  } catch (error) {
+    notFound();
   }
 };

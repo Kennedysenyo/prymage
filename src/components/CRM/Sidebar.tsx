@@ -85,7 +85,7 @@ export function Sidebar({ session }: Props) {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center">
               <img
-                className="w-full h-full"
+                className="w-full h-full rounded-full"
                 src={session?.user?.image ?? "/assets/default-image.png"}
                 alt={session?.user?.name ?? "Note Author"}
               />

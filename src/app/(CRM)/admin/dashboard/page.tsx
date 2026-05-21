@@ -9,6 +9,8 @@ export default async function DashboardHomePage() {
     redirect("/sign-in");
   }
 
+  // TODO: Implement streaming
+
   const {
     totalLeads,
     newLeads,

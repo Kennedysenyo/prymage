@@ -1,6 +1,7 @@
 "use client";
 
 import { logOut } from "@/features/auth/auth.service";
+import { cn } from "@/lib/utils";
 import { ChevronDown, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
@@ -48,7 +49,7 @@ export const MenuButton = ({ user }: Props) => {
       >
         <div className="w-8 h-8 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center">
           <img
-            className="w-full h-full"
+            className="w-full h-full rounded-full"
             src={user?.image ?? "/assets/default-image.png"}
             alt={user?.name ?? "Note Author"}
           />
@@ -68,13 +69,13 @@ export const MenuButton = ({ user }: Props) => {
               <p className="text-sm text-gray-500">{user?.email}</p>
             </div>
             <Link
-              href="#"
+              href="/admin/profile"
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
             >
               Profile
             </Link>
             <Link
-              href="#"
+              href="/admin/settings"
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
             >
               Settings
@@ -82,7 +83,10 @@ export const MenuButton = ({ user }: Props) => {
             <hr className="my-2" />
             <button
               onClick={handleLogout}
-              className="block px-4 py-2 w-full text-sm text-red-600 hover:bg-gray-100"
+              className={cn(
+                "block px-4 py-2 w-full text-sm text-red-600 hover:bg-gray-100",
+                pending && "pointer-events-none",
+              )}
             >
               {pending ? (
                 <Loader2 size={18} className="animate-spin mx-auto" />

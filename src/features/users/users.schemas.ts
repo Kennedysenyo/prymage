@@ -64,3 +64,25 @@ export const editUserSchema = dbUserSchema
     }),
     password: z.string().nullable(),
   });
+
+export const phoneSchema = z
+  .string()
+  .trim()
+  .regex(/^[+]?[0-9\s\-()]+$/, "Invalid phone number format")
+  .min(10, "Phone number is too short")
+  .max(15, "Phone number is too long")
+  .nullable()
+  .optional();
+
+export const profileInsertSchema = dbUserSchema
+  .pick({
+    name: true,
+    phone: true,
+  })
+  .extend({
+    name: z.string().min(5, {
+      error: (iss) =>
+        iss.input?.length !== 0 ? "Name must be > 5 chars long." : "Enter name",
+    }),
+    phone: z.string().nullable(),
+  });

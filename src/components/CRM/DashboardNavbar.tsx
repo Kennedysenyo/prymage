@@ -15,6 +15,7 @@ const pageTitles: Record<string, string> = {
   "/admin/users/add": "Add New User",
   "/admin/analytics": "Analytics",
   "/admin/settings": "Settings",
+  "/admin/profile": "Profile",
 };
 
 interface Props {
@@ -63,10 +64,10 @@ export function DashboardNavbar({ userSession: session }: Props) {
             />
           </div> */}
 
-          <button className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
+          {/* <button className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <Bell size={20} />
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-          </button>
+          </button> */}
 
           <MenuButton user={session?.user} />
         </div>

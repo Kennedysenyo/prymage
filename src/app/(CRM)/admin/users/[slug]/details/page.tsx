@@ -12,7 +12,8 @@ export default async function UserDetailsPage({
   if (!session?.user) {
     redirect("/sign-in");
   }
-
+  // TODO: Implement streaming on this page.
+  // Break fetches down and apply streaming to each section.
   const { slug } = await params;
   const {
     userDetails,

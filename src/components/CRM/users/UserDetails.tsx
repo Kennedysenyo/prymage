@@ -118,7 +118,7 @@ export function UserDetails({
           <div className="text-center mb-6">
             <div className="w-24 h-24 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4">
               <img
-                className="w-full h-full"
+                className="w-full h-full rounded-full"
                 src={user.image ?? "/assets/default-image.png"}
                 alt={user.name ?? "Note Author"}
               />
@@ -154,6 +154,16 @@ export function UserDetails({
                 <p className="text-gray-900">{user.position}</p>
               </div>
             </div>
+
+            {user.phone && (
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                <Phone size={20} className="text-gray-400" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-gray-500">Phone</p>
+                  <p className="text-gray-900 truncate">{user.phone}</p>
+                </div>
+              </div>
+            )}
 
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
               <Shield size={20} className="text-gray-400" />

@@ -105,7 +105,7 @@ export function AllUsers({ users }: Props) {
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white font-semibold">
                         <img
-                          className="w-full h-full"
+                          className="w-full h-full rounded-full"
                           src={user.image ?? "/assets/default-image.png"}
                           alt={user.name ?? "Note Author"}
                         />
@@ -192,7 +192,7 @@ export function AllUsers({ users }: Props) {
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white font-semibold">
                 <img
-                  className="w-full h-full"
+                  className="w-full h-full rounded-full"
                   src={user.image ?? "/assets/default-image.png"}
                   alt={user.name ?? "Note Author"}
                 />

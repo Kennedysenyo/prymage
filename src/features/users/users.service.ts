@@ -1,7 +1,10 @@
 "use server";
 
-import z, { email } from "zod";
-import { createUserSchema, editUserSchema } from "./users.schemas";
+import {
+  createUserSchema,
+  editUserSchema,
+  profileInsertSchema,
+} from "./users.schemas";
 import {
   CreateUserFormFieldsErrors,
   CreateUserFormResponseType,
@@ -9,6 +12,10 @@ import {
   EditUserDataType,
   EditUserFormFieldErrors,
   EditUserFormResponseType,
+  UserProfileData,
+  UserProfileUpdateData,
+  UserProfileUpdateFormFieldsError,
+  UserProfileUpdateFormResponseType,
 } from "./users.types";
 import { handleError } from "@/lib/utils";
 import { auth } from "@/lib/better-auth/auth";
@@ -16,7 +23,7 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { requirePermission } from "../auth/auth.authorize";
 import { sendEmail } from "../emails/emails.service";
-import { user } from "@/lib/db/auth-schema";
+import z from "zod";
 
 const createUser = async (
   userData: Omit<CreateUserFormType, "cnfrmPassword">,
@@ -181,4 +188,51 @@ export const toggleUserBan = async (userId: string, isBanned: boolean) => {
   } catch (error) {
     return handleError(error);
   }
+};
+
+const updateProfile = async (
+  data: UserProfileUpdateData,
+): Promise<string | null> => {
+  try {
+    await auth.api.updateUser({
+      body: {
+        name: data.name,
+        phone: data.phone,
+      },
+      headers: await headers(),
+    });
+
+    return null;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const validateProfileForm = async (
+  id: string,
+  _prevState: UserProfileUpdateFormResponseType,
+  formData: FormData,
+): Promise<UserProfileUpdateFormResponseType> => {
+  const rawInput = Object.fromEntries(formData);
+
+  const result = profileInsertSchema.safeParse(rawInput);
+
+  if (!result.success) {
+    let errors: UserProfileUpdateFormFieldsError = {};
+
+    const flattenedErrors = z.flattenError(result.error).fieldErrors;
+
+    for (const [key, value] of Object.entries(flattenedErrors)) {
+      errors = { ...errors, [key]: value[0] };
+    }
+
+    return { success: false, errors, errorMessage: null };
+  }
+
+  const errorMessage = await updateProfile(result.data);
+  if (errorMessage) {
+    return { success: false, errors: {}, errorMessage };
+  }
+
+  return { success: true, errors: {}, errorMessage: null };
 };

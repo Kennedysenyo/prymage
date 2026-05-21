@@ -17,6 +17,7 @@ export const user = pgTable(
     id: text("id").primaryKey(),
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
+    phone: text("phone").unique(),
     emailVerified: boolean("email_verified").default(false).notNull(),
     image: text("image"),
     role: rolesEnum().notNull().default("staff"),
