@@ -209,7 +209,6 @@ const updateProfile = async (
 };
 
 export const validateProfileForm = async (
-  id: string,
   _prevState: UserProfileUpdateFormResponseType,
   formData: FormData,
 ): Promise<UserProfileUpdateFormResponseType> => {

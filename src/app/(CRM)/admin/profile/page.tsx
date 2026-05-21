@@ -1,5 +1,5 @@
 import { Profile } from "@/components/CRM/profile/Profile";
-import { fetchUserProfileData } from "@/features/users/users.queries";
+import { fetchUserAndPerformanceDetails } from "@/features/users/users.queries";
 import { getSession } from "@/lib/better-auth/auth-helpers";
 import { redirect } from "next/navigation";
 
@@ -10,7 +10,10 @@ export default async function ProfilePage() {
   }
   const userId = session.user.id;
 
-  const user = await fetchUserProfileData(userId);
+  const { userDetails, userPerformanceData } =
+    await fetchUserAndPerformanceDetails(userId);
 
-  return <Profile user={user} />;
+  return (
+    <Profile user={userDetails} monthlyPerformance={userPerformanceData} />
+  );
 }

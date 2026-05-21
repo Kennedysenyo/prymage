@@ -4,7 +4,7 @@ import { user } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/db";
 import { leads, leadStageHistory } from "@/lib/db/schema";
 import { handleError } from "@/lib/utils";
-import { count, desc, eq, sql } from "drizzle-orm";
+import { and, count, desc, eq, sql } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import {
   fetchAssignedLeadsById,
@@ -12,6 +12,7 @@ import {
   fetchLeadsWonByUserId,
   fetchUserActiveLeadsCount,
   fetchUserLeadsStageCountDataById,
+  fetchUserMonthlyPerformance,
   fetchUserPerformanceDataById,
 } from "../leads/leads.queries";
 
@@ -194,4 +195,15 @@ export const fetchUserProfileData = async (id: string) => {
   } catch (error) {
     notFound();
   }
+};
+
+export const fetchUserAndPerformanceDetails = async (id: string) => {
+  const [userDetails, userPerformanceData] = await Promise.all([
+    fetchUserProfileData(id),
+    fetchUserMonthlyPerformance(id),
+  ]);
+  return {
+    userDetails,
+    userPerformanceData,
+  };
 };

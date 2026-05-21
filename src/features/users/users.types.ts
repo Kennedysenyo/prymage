@@ -5,6 +5,7 @@ import {
   profileInsertSchema,
 } from "./users.schemas";
 import { fetchUserProfileData } from "./users.queries";
+import { fetchUserMonthlyPerformance } from "../leads/leads.queries";
 
 // ---------Create User
 
@@ -33,6 +34,10 @@ export type EditUserFormResponseType = {
 // ------------Profile Data
 
 export type UserProfileData = Awaited<ReturnType<typeof fetchUserProfileData>>;
+
+export type UserMonthlyPerformanceData = Awaited<
+  ReturnType<typeof fetchUserMonthlyPerformance>
+>;
 
 export type UserProfileUpdateData = z.infer<typeof profileInsertSchema>;
 

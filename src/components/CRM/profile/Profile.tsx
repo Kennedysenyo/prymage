@@ -29,16 +29,21 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import {
+  UserMonthlyPerformanceData,
   UserProfileData,
   UserProfileUpdateData,
   UserProfileUpdateFormResponseType,
 } from "@/features/users/users.types";
 import { capitalizeWord, cn } from "@/lib/utils";
-import { success } from "zod";
 import { validateProfileForm } from "@/features/users/users.service";
 import toast from "react-hot-toast";
 
-export function Profile({ user }: { user: UserProfileData }) {
+interface Props {
+  user: UserProfileData;
+  monthlyPerformance: UserMonthlyPerformanceData;
+}
+
+export function Profile({ user, monthlyPerformance }: Props) {
   const [activeTab, setActiveTab] = useState<
     "personal" | "security" | "notifications"
   >("personal");
@@ -63,7 +68,7 @@ export function Profile({ user }: { user: UserProfileData }) {
   };
 
   const [personalDataState, dataFormAction, isPending] = useActionState(
-    validateProfileForm.bind(null, user.id),
+    validateProfileForm,
     initialState,
   );
 
@@ -92,24 +97,6 @@ export function Profile({ user }: { user: UserProfileData }) {
     leadsWon: 18,
     leadsActive: 20,
     memberSince: "2023-01-15",
-  };
-
-  const monthlyPerformance = [
-    { month: "Jan", leads: 8 },
-    { month: "Feb", leads: 12 },
-    { month: "Mar", leads: 10 },
-    { month: "Apr", leads: 15 },
-    { month: "May", leads: 18 },
-  ];
-
-  const handleSavePersonalInfo = (e: React.FormEvent) => {
-    e.preventDefault();
-    // console.log("Saving personal info:", personalInfo);
-  };
-
-  const handleChangePassword = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Changing password");
   };
 
   const handleSaveNotifications = () => {
@@ -177,7 +164,8 @@ export function Profile({ user }: { user: UserProfileData }) {
             >
               Security
             </button>
-            <button
+            {/* TODO: Uncomment Notifications tab */}
+            {/* <button
               onClick={() => setActiveTab("notifications")}
               className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all ${
                 activeTab === "notifications"
@@ -186,7 +174,7 @@ export function Profile({ user }: { user: UserProfileData }) {
               }`}
             >
               Notifications
-            </button>
+            </button> */}
           </div>
         </div>
 
@@ -363,7 +351,7 @@ export function Profile({ user }: { user: UserProfileData }) {
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
                 Security Settings
               </h2>
-              <form onSubmit={handleChangePassword} className="space-y-6">
+              <form action={() => {}} className="space-y-6">
                 <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 flex items-start gap-3">
                   <Shield
                     size={20}
@@ -498,8 +486,8 @@ export function Profile({ user }: { user: UserProfileData }) {
                   Change Password
                 </button>
               </form>
-
-              <div className="mt-8 pt-8 border-t border-gray-200">
+              {/* TODO: Add 2FA feature */}
+              {/* <div className="mt-8 pt-8 border-t border-gray-200">
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
                   Two-Factor Authentication
                 </h3>
@@ -521,7 +509,7 @@ export function Profile({ user }: { user: UserProfileData }) {
                     Enable 2FA
                   </button>
                 </div>
-              </div>
+              </div> */}
             </motion.div>
           )}
 

@@ -547,3 +547,35 @@ export const fetchAssignedLeadsById = async (id: string) => {
     throw new Error(handleError(error));
   }
 };
+
+export const fetchUserMonthlyPerformance = async (id: string) => {
+  try {
+    const data = await db
+      .select({
+        monthDate: sql<string>`DATE_TRUNC('month', ${leads.createdAt})`.as(
+          "month_date",
+        ),
+        leads: sql<number>`COUNT(${leads.id})`.as("leads"),
+      })
+      .from(leads)
+      .where(
+        and(
+          eq(leads.assignedTo, id),
+          sql`EXTRACT(YEAR FROM ${leads.createdAt}) = EXTRACT(YEAR FROM NOW())`,
+        ),
+      )
+
+      .groupBy(sql`DATE_TRUNC('month', ${leads.createdAt})`)
+      .orderBy(sql`DATE_TRUNC('month', ${leads.createdAt})`);
+
+    return data.map((row) => {
+      const date = new Date(row.monthDate);
+      return {
+        month: date.toLocaleString("en-US", { month: "short" }),
+        leads: Number(row.leads),
+      };
+    });
+  } catch (error) {
+    throw new Error(handleError(error));
+  }
+};
