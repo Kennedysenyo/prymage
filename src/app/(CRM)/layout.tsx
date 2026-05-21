@@ -13,8 +13,10 @@ export default async function CRMLayout({
     <div className="min-h-screen bg-[#f7f7fa] ">
       <SidebarProvider>
         <Sidebar session={session} />
-        <DashboardNavbar userSession={session} />
-        <div className="pl-4 lg:pl-68 pr-4">{children}</div>
+        <div className="lg:pl-64">
+          <DashboardNavbar userSession={session} />
+          <div className="p-4">{children}</div>
+        </div>
       </SidebarProvider>
     </div>
   );
