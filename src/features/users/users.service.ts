@@ -1,6 +1,7 @@
 "use server";
 
 import {
+  changePasswordSchema,
   createUserSchema,
   editUserSchema,
   profileInsertSchema,
@@ -12,7 +13,9 @@ import {
   EditUserDataType,
   EditUserFormFieldErrors,
   EditUserFormResponseType,
-  UserProfileData,
+  UserPasswordChangeData,
+  UserPasswordChangeFormFieldsError,
+  UserPasswordChangeFormResponseType,
   UserProfileUpdateData,
   UserProfileUpdateFormFieldsError,
   UserProfileUpdateFormResponseType,
@@ -24,6 +27,7 @@ import { revalidatePath } from "next/cache";
 import { requirePermission } from "../auth/auth.authorize";
 import { sendEmail } from "../emails/emails.service";
 import z from "zod";
+import { logOut } from "../auth/auth.service";
 
 const createUser = async (
   userData: Omit<CreateUserFormType, "cnfrmPassword">,
@@ -229,6 +233,55 @@ export const validateProfileForm = async (
   }
 
   const errorMessage = await updateProfile(result.data);
+  if (errorMessage) {
+    return { success: false, errors: {}, errorMessage };
+  }
+
+  return { success: true, errors: {}, errorMessage: null };
+};
+
+const changePassword = async (
+  data: UserPasswordChangeData,
+): Promise<string | null> => {
+  try {
+    await auth.api.changePassword({
+      body: {
+        newPassword: data.newPassword,
+        currentPassword: data.currentPassword,
+        revokeOtherSessions: true,
+      },
+      headers: await headers(),
+    });
+
+    await logOut();
+    return null;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const validateChangePasswordForm = async (
+  _prevState: UserPasswordChangeFormResponseType,
+  formData: FormData,
+): Promise<UserPasswordChangeFormResponseType> => {
+  const rawInput = Object.fromEntries(formData);
+
+  const result = changePasswordSchema.safeParse(rawInput);
+
+  if (!result.success) {
+    let errors: UserPasswordChangeFormFieldsError = {};
+
+    const flattenedErrors = z.flattenError(result.error).fieldErrors;
+
+    for (const [k, v] of Object.entries(flattenedErrors)) {
+      errors = { ...errors, [k]: v[0] };
+    }
+
+    return { success: false, errors, errorMessage: null };
+  }
+
+  const errorMessage = await changePassword(result.data);
+
   if (errorMessage) {
     return { success: false, errors: {}, errorMessage };
   }

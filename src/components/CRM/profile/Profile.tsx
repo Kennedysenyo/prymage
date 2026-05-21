@@ -30,12 +30,17 @@ import {
 } from "recharts";
 import {
   UserMonthlyPerformanceData,
+  UserPasswordChangeData,
+  UserPasswordChangeFormResponseType,
   UserProfileData,
   UserProfileUpdateData,
   UserProfileUpdateFormResponseType,
 } from "@/features/users/users.types";
 import { capitalizeWord, cn } from "@/lib/utils";
-import { validateProfileForm } from "@/features/users/users.service";
+import {
+  validateChangePasswordForm,
+  validateProfileForm,
+} from "@/features/users/users.service";
 import toast from "react-hot-toast";
 
 interface Props {
@@ -78,11 +83,32 @@ export function Profile({ user, monthlyPerformance }: Props) {
     }
   }, [personalDataState.success]);
 
-  const [passwordData, setPasswordData] = useState({
+  const [passwordData, setPasswordData] = useState<UserPasswordChangeData>({
     currentPassword: "",
     newPassword: "",
-    confirmPassword: "",
+    cnfrmNewPassword: "",
   });
+
+  const handlePasswordFormChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setPasswordData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const initialStatePasswordChangeState: UserPasswordChangeFormResponseType = {
+    success: false,
+    errors: {},
+    errorMessage: null,
+  };
+
+  const [
+    changePasswordFormState,
+    changePasswordFormAction,
+    isPendingChangePassword,
+  ] = useActionState(
+    validateChangePasswordForm,
+    initialStatePasswordChangeState,
+  );
 
   const [notifications, setNotifications] = useState({
     emailLeads: true,
@@ -91,13 +117,6 @@ export function Profile({ user, monthlyPerformance }: Props) {
     smsAlerts: true,
     weeklyDigest: true,
   });
-
-  const userStats = {
-    leadsAssigned: 45,
-    leadsWon: 18,
-    leadsActive: 20,
-    memberSince: "2023-01-15",
-  };
 
   const handleSaveNotifications = () => {
     console.log("Saving notifications:", notifications);
@@ -351,7 +370,8 @@ export function Profile({ user, monthlyPerformance }: Props) {
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
                 Security Settings
               </h2>
-              <form action={() => {}} className="space-y-6">
+
+              <form action={changePasswordFormAction} className="space-y-6">
                 <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 flex items-start gap-3">
                   <Shield
                     size={20}
@@ -369,6 +389,12 @@ export function Profile({ user, monthlyPerformance }: Props) {
                   </div>
                 </div>
 
+                {changePasswordFormState.errorMessage && (
+                  <p className="text-red-400 text-center">
+                    {changePasswordFormState.errorMessage}
+                  </p>
+                )}
+
                 <div>
                   <label className="block text-gray-700 font-medium mb-2">
                     Current Password
@@ -380,21 +406,15 @@ export function Profile({ user, monthlyPerformance }: Props) {
                     />
                     <input
                       type={showCurrentPassword ? "text" : "password"}
+                      name="currentPassword"
                       value={passwordData.currentPassword}
-                      onChange={(e) =>
-                        setPasswordData({
-                          ...passwordData,
-                          currentPassword: e.target.value,
-                        })
-                      }
-                      className="w-full pl-12 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#5B2CA5] transition-colors"
+                      onChange={handlePasswordFormChange}
+                      className="w-full pl-12 pr-12 py-3 text-gray-600 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#5B2CA5] transition-colors"
                       placeholder="Enter current password"
                     />
                     <button
                       type="button"
-                      onClick={() =>
-                        setShowCurrentPassword(!showCurrentPassword)
-                      }
+                      onClick={() => setShowCurrentPassword((prev) => !prev)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                     >
                       {showCurrentPassword ? (
@@ -404,6 +424,11 @@ export function Profile({ user, monthlyPerformance }: Props) {
                       )}
                     </button>
                   </div>
+                  {changePasswordFormState.errors.currentPassword && (
+                    <p className="text-red-400 text-xs">
+                      {changePasswordFormState.errors.currentPassword}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -417,19 +442,15 @@ export function Profile({ user, monthlyPerformance }: Props) {
                     />
                     <input
                       type={showNewPassword ? "text" : "password"}
+                      name="newPassword"
                       value={passwordData.newPassword}
-                      onChange={(e) =>
-                        setPasswordData({
-                          ...passwordData,
-                          newPassword: e.target.value,
-                        })
-                      }
-                      className="w-full pl-12 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#5B2CA5] transition-colors"
+                      onChange={handlePasswordFormChange}
+                      className="w-full pl-12 pr-12 py-3 text-gray-600 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#5B2CA5] transition-colors"
                       placeholder="Enter new password"
                     />
                     <button
                       type="button"
-                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      onClick={() => setShowNewPassword((prev) => !prev)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                     >
                       {showNewPassword ? (
@@ -439,6 +460,11 @@ export function Profile({ user, monthlyPerformance }: Props) {
                       )}
                     </button>
                   </div>
+                  {changePasswordFormState.errors.newPassword && (
+                    <p className="text-red-400 text-xs">
+                      {changePasswordFormState.errors.newPassword}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -452,21 +478,15 @@ export function Profile({ user, monthlyPerformance }: Props) {
                     />
                     <input
                       type={showConfirmPassword ? "text" : "password"}
-                      value={passwordData.confirmPassword}
-                      onChange={(e) =>
-                        setPasswordData({
-                          ...passwordData,
-                          confirmPassword: e.target.value,
-                        })
-                      }
-                      className="w-full pl-12 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#5B2CA5] transition-colors"
+                      name="cnfrmNewPassword"
+                      value={passwordData.cnfrmNewPassword}
+                      onChange={handlePasswordFormChange}
+                      className="w-full pl-12 pr-12 py-3 text-gray-600 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#5B2CA5] transition-colors"
                       placeholder="Confirm new password"
                     />
                     <button
                       type="button"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
+                      onClick={() => setShowConfirmPassword((prev) => !prev)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                     >
                       {showConfirmPassword ? (
@@ -476,16 +496,31 @@ export function Profile({ user, monthlyPerformance }: Props) {
                       )}
                     </button>
                   </div>
+                  {changePasswordFormState.errors.cnfrmNewPassword && (
+                    <p className="text-red-400 text-xs">
+                      {changePasswordFormState.errors.cnfrmNewPassword}
+                    </p>
+                  )}
                 </div>
 
                 <button
                   type="submit"
                   className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#5B2CA5] to-[#D4A24C] text-white rounded-xl hover:shadow-lg transition-all"
                 >
-                  <Lock size={20} />
-                  Change Password
+                  {isPendingChangePassword ? (
+                    <span className="flex items-center gap-2">
+                      <Loader2 size={18} className="animate-spin " />
+                      <span>Saving...</span>
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      <Lock size={20} />
+                      Change Password
+                    </span>
+                  )}
                 </button>
               </form>
+
               {/* TODO: Add 2FA feature */}
               {/* <div className="mt-8 pt-8 border-t border-gray-200">
                 <h3 className="text-xl font-bold text-gray-900 mb-4">

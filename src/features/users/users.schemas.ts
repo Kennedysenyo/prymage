@@ -86,3 +86,18 @@ export const profileInsertSchema = dbUserSchema
     }),
     phone: z.string().nullable(),
   });
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, { error: "Enter password" }),
+    newPassword: z
+      .string()
+      .min(8, { error: "Password must be >= 8 chars long." }),
+    cnfrmNewPassword: z
+      .string()
+      .min(8, { error: "Password must be >= 8 chars long." }),
+  })
+  .refine((data) => data.newPassword === data.cnfrmNewPassword, {
+    message: "Passwords do not match",
+    path: ["cnfrmNewPassword"],
+  });

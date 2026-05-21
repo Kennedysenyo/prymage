@@ -1,5 +1,6 @@
 import z from "zod";
 import {
+  changePasswordSchema,
   createUserSchema,
   editUserSchema,
   profileInsertSchema,
@@ -47,4 +48,16 @@ export type UserProfileUpdateFormResponseType = {
   success: boolean;
   errorMessage: string | null;
   errors: UserProfileUpdateFormFieldsError;
+};
+
+// --------------- Change Password
+
+export type UserPasswordChangeData = z.infer<typeof changePasswordSchema>;
+
+export type UserPasswordChangeFormFieldsError = Partial<UserPasswordChangeData>;
+
+export type UserPasswordChangeFormResponseType = {
+  success: boolean;
+  errorMessage: string | null;
+  errors: UserPasswordChangeFormFieldsError;
 };
