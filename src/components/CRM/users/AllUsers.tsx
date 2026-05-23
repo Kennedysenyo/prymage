@@ -190,16 +190,16 @@ export function AllUsers({ users }: Props) {
             className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100"
           >
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white font-semibold">
+              <div className="shrink-0 w-12 h-12 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white font-semibold">
                 <img
                   className="w-full h-full rounded-full"
                   src={user.image ?? "/assets/default-image.png"}
                   alt={user.name ?? "Note Author"}
                 />
               </div>
-              <div className="flex-1">
-                <h3 className="font-bold text-gray-900">{user.name}</h3>
-                <p className="text-sm text-gray-500">{user.email}</p>
+              <div className="flex-1  truncate">
+                <h3 className="font-bold text-gray-900 ">{user.name}</h3>
+                <p className="text-sm text-gray-500 ">{user.email}</p>
               </div>
               <span
                 className={`px-3 py-1 rounded-lg text-sm font-medium ${

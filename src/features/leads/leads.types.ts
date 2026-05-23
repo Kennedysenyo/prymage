@@ -5,6 +5,7 @@ import {
   selectAllLeadsTableSchema,
   selectLeadDetailsSchema,
 } from "./leads.schemas";
+import { fetchLeadToAssignStaffById } from "./leads.queries";
 
 export type CreateLeadsDataType = z.infer<typeof createLeadsSchema>;
 
@@ -57,3 +58,7 @@ export type CreateNoteFormResponseType = {
 };
 
 export type Stage = "new" | "contacted" | "qualified" | "won" | "lost";
+
+export type AssignStaffLead = Awaited<
+  ReturnType<typeof fetchLeadToAssignStaffById>
+>;

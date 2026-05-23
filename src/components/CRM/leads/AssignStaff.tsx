@@ -17,30 +17,13 @@ import { capitalizeWord } from "@/lib/utils";
 import { assignStaff } from "@/features/leads/leads.service";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { AssignStaffUsers } from "@/features/users/users.types";
+import { AssignStaffLead } from "@/features/leads/leads.types";
 
 interface Props {
   actionBy: string;
-  lead: {
-    id: string;
-    name: string;
-    company: string;
-    email: string;
-    phone: string;
-    interest: string;
-    country: string;
-    stage: "new" | "contacted" | "qualified" | "won" | "lost";
-    assignedTo: string | null;
-    assignedUser: string | null;
-    createdAt: Date;
-  };
-  users: {
-    id: string;
-    name: string;
-    email: string;
-    image: string | null;
-    position: string;
-    leadsAssigned: number;
-  }[];
+  lead: AssignStaffLead;
+  users: AssignStaffUsers;
 }
 
 export function AssignStaff({ actionBy, lead, users }: Props) {

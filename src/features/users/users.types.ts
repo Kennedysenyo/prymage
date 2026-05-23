@@ -5,7 +5,7 @@ import {
   editUserSchema,
   profileInsertSchema,
 } from "./users.schemas";
-import { fetchUserProfileData } from "./users.queries";
+import { fetchAllUsers, fetchUserProfileData } from "./users.queries";
 import { fetchUserMonthlyPerformance } from "../leads/leads.queries";
 
 // ---------Create User
@@ -61,3 +61,5 @@ export type UserPasswordChangeFormResponseType = {
   errorMessage: string | null;
   errors: UserPasswordChangeFormFieldsError;
 };
+
+export type AssignStaffUsers = Awaited<ReturnType<typeof fetchAllUsers>>;
