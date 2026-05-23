@@ -29,6 +29,13 @@ export const auth = betterAuth({
     enabled: true,
   },
 
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 60,
+    },
+  },
+
   plugins: [
     emailOTP({
       async sendVerificationOTP({ email, otp, type }) {

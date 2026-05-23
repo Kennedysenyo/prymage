@@ -201,13 +201,14 @@ const updateProfile = async (
     await auth.api.updateUser({
       body: {
         name: data.name,
-        phone: data.phone,
+        phone: data?.phone?.trim() || null,
       },
       headers: await headers(),
     });
 
     return null;
   } catch (error) {
+    console.error(error);
     return handleError(error);
   }
 };
