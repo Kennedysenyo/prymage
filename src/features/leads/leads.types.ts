@@ -5,7 +5,11 @@ import {
   selectAllLeadsTableSchema,
   selectLeadDetailsSchema,
 } from "./leads.schemas";
-import { fetchLeadToAssignStaffById } from "./leads.queries";
+import {
+  fetchDashboardCardStats,
+  fetchDashboardChartsData,
+  fetchLeadToAssignStaffById,
+} from "./leads.queries";
 
 export type CreateLeadsDataType = z.infer<typeof createLeadsSchema>;
 
@@ -62,3 +66,6 @@ export type Stage = "new" | "contacted" | "qualified" | "won" | "lost";
 export type AssignStaffLead = Awaited<
   ReturnType<typeof fetchLeadToAssignStaffById>
 >;
+
+export type CardsData = Awaited<ReturnType<typeof fetchDashboardCardStats>>;
+export type ChartsData = Awaited<ReturnType<typeof fetchDashboardChartsData>>;

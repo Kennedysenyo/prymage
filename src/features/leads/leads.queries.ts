@@ -3,7 +3,19 @@
 import { user } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/db";
 import { leadNote, leads, leadStageHistory } from "@/lib/db/schema";
-import { and, asc, count, desc, eq, isNotNull, ne, or, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  gte,
+  isNotNull,
+  lte,
+  ne,
+  or,
+  sql,
+} from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { fetchAllUsers } from "../users/users.queries";
 import { handleError } from "@/lib/utils";
@@ -109,69 +121,119 @@ export const fetchLeadDetailsById = async (id: string) => {
   return { lead, notes, history };
 };
 
-export const fetchTotalLeadsCount = async () => {
+export async function fetchDashboardStats() {
   const [result] = await db
     .select({
-      count: count(),
+      totalLeads: count(),
+
+      newLeads: sql<number>`
+        count(case when ${leads.stage} = 'new' then 1 end)
+      `,
+
+      contactedLeads: sql<number>`
+        count(case when ${leads.stage} = 'contacted' then 1 end)
+      `,
+
+      qualifiedLeads: sql<number>`
+        count(case when ${leads.stage} = 'qualified' then 1 end)
+      `,
+
+      wonLeads: sql<number>`
+        count(case when ${leads.stage} = 'won' then 1 end)
+      `,
+
+      lostLeads: sql<number>`
+        count(case when ${leads.stage} = 'lost' then 1 end)
+      `,
     })
     .from(leads);
 
-  return Number(result.count);
-};
+  return result;
+}
 
-export const fetchNewLeadsCount = async () => {
-  const [result] = await db
+export async function getLeadStats(startDate: Date, endDate: Date) {
+  const result = await db
     .select({
-      count: count(),
+      totalLeads: sql<number>`count(*)`,
+
+      newLeads: sql<number>`
+        count(case when ${leads.stage} = 'New' then 1 end)
+      `,
+
+      contactedLeads: sql<number>`
+        count(case when ${leads.stage} = 'Contacted' then 1 end)
+      `,
+
+      qualifiedLeads: sql<number>`
+        count(case when ${leads.stage} = 'Qualified' then 1 end)
+      `,
+
+      wonLeads: sql<number>`
+        count(case when ${leads.stage} = 'Won' then 1 end)
+      `,
+
+      lostLeads: sql<number>`
+        count(case when ${leads.stage} = 'Lost' then 1 end)
+      `,
     })
     .from(leads)
-    .where(eq(leads.stage, "new"));
+    .where(and(gte(leads.createdAt, startDate), lte(leads.createdAt, endDate)));
 
-  return Number(result.count);
+  return result[0];
+}
+
+const calculateDelta = (
+  current: number,
+  previous: number,
+): { change: string; trend: "up" | "down" } => {
+  if (previous === 0) {
+    return { change: "0%", trend: "up" };
+  }
+
+  const percentage = ((current - previous) / previous) * 100;
+
+  return {
+    change: `${percentage > 0 ? "+" : ""}${percentage.toFixed(1)}%`,
+    trend: percentage >= 0 ? "up" : "down",
+  };
 };
 
-export const fetchContactedLeadsCount = async () => {
-  const [result] = await db
-    .select({
-      count: count(),
-    })
-    .from(leads)
-    .where(eq(leads.stage, "contacted"));
+export const fetchDashboardCardStats = async () => {
+  const now = new Date();
+  const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const previousMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const previousMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
 
-  return Number(result.count);
-};
+  const [cardsStats, currentMonthStats, previousMonthStats] = await Promise.all(
+    [
+      fetchDashboardStats(),
+      getLeadStats(currentMonthStart, now),
+      getLeadStats(previousMonthStart, previousMonthEnd),
+    ],
+  );
 
-export const fetchQualifiedLeadsCount = async () => {
-  const [result] = await db
-    .select({
-      count: count(),
-    })
-    .from(leads)
-    .where(eq(leads.stage, "qualified"));
+  const keys = Object.keys(cardsStats) as Array<keyof typeof cardsStats>;
 
-  return Number(result.count);
-};
+  const finalData = keys.reduce(
+    (acc, key) => {
+      acc[key] = {
+        value: cardsStats[key],
+        ...calculateDelta(currentMonthStats[key], previousMonthStats[key]),
+      };
 
-export const fetchWonLeadsCount = async () => {
-  const [result] = await db
-    .select({
-      count: count(),
-    })
-    .from(leads)
-    .where(eq(leads.stage, "won"));
+      return acc;
+    },
+    {} as Record<
+      keyof typeof cardsStats,
+      {
+        value: number;
+        change: string;
+        trend: "up" | "down";
+      }
+    >,
+  );
 
-  return Number(result.count);
-};
-
-export const fetchLostLeads = async () => {
-  const [result] = await db
-    .select({
-      count: count(),
-    })
-    .from(leads)
-    .where(eq(leads.stage, "lost"));
-
-  return Number(result.count);
+  return finalData;
 };
 
 const fetchLeadsStageData = async () => {
@@ -312,26 +374,14 @@ const fetchConversionRate = async () => {
   return Number(rate.toFixed(2));
 };
 
-export const fetchDashboardData = async () => {
+export const fetchDashboardChartsData = async () => {
   const [
-    totalLeads,
-    newLeads,
-    contactedLeads,
-    qualifiedLeads,
-    wonLeads,
-    lostLeads,
     leadStageData,
     leadsByCountryData,
     monthlyGrowthData,
     staffAssignmentsData,
     convrsionRate,
   ] = await Promise.all([
-    fetchTotalLeadsCount(),
-    fetchNewLeadsCount(),
-    fetchContactedLeadsCount(),
-    fetchQualifiedLeadsCount(),
-    fetchWonLeadsCount(),
-    fetchLostLeads(),
     fetchLeadsStageData(),
     fetchLeadsByCountryData(),
     fetchMonthlyGrowthData(),
@@ -339,12 +389,6 @@ export const fetchDashboardData = async () => {
     fetchConversionRate(),
   ]);
   return {
-    totalLeads,
-    newLeads,
-    contactedLeads,
-    qualifiedLeads,
-    wonLeads,
-    lostLeads,
     leadStageData,
     leadsByCountryData,
     monthlyGrowthData,

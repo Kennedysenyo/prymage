@@ -28,6 +28,7 @@ export const createLeadsSchema = dbLeadsSchema
       .regex(/^\+?[0-9\s\-()]+$/, "Please enter a valid phone number")
       .min(7, "Phone number is too short")
       .max(20, "Phone number is too long"),
+    company: z.string().min(1, { error: "Enter company name" }),
     interest: z.string().min(1, { error: "Select interest" }),
     country: z.string().min(1, { error: "Select country" }),
     message: z.string().min(10, {
