@@ -1,5 +1,3 @@
-"use client";
-
 import { motion } from "motion/react";
 import { Users } from "lucide-react";
 import {
@@ -27,6 +25,8 @@ import { Cards } from "./Cards";
 import { CardsSkeleton } from "./skeletons/CardSkeleton";
 import { StageChart } from "./StageChart";
 import { StageChartSkeleton } from "./skeletons/StageChartSkeleton";
+import { LeadByCountryChart } from "./LeadByCountryChart";
+import { LeadByCountryChartSkeleton } from "./skeletons/LeadByCountryChartSkeleton";
 
 interface Props {
   cardsData: CardsData;
@@ -42,6 +42,9 @@ export default function DashboardHome({ cardsData, chartsData }: Props) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Suspense fallback={<StageChartSkeleton />}>
           <StageChart data={chartsData.leadStageData} />
+        </Suspense>
+        <Suspense fallback={<LeadByCountryChartSkeleton />}>
+          <LeadByCountryChart statData={chartsData.staffAssignmentsData} />
         </Suspense>
       </div>
 

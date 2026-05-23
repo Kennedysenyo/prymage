@@ -1,4 +1,25 @@
-export const StaffLeadChart = () => {
+"use client";
+
+import { capitalizeWord } from "@/lib/utils";
+
+import { motion } from "motion/react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+
+interface Props {
+  statData: {
+    name: string;
+    leads: number;
+  }[];
+}
+export const LeadByCountryChart = ({ statData }: Props) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -9,7 +30,7 @@ export const StaffLeadChart = () => {
       <h3 className="text-xl font-bold text-gray-900 mb-6">Leads by Country</h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart
-          data={leadsByCountryData.map((lead) => ({
+          data={statData.map((lead) => ({
             ...lead,
             name: capitalizeWord(lead.name),
           }))}
