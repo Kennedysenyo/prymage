@@ -1,23 +1,5 @@
 import { motion } from "motion/react";
 import { Users } from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  PieLabel,
-  Sector,
-} from "recharts";
-import { capitalizeWord } from "@/lib/utils";
 
 import { CardsData, ChartsData } from "@/features/leads/leads.types";
 import { Suspense } from "react";
@@ -29,6 +11,7 @@ import { LeadByCountryChart } from "./LeadByCountryChart";
 import { LeadByCountryChartSkeleton } from "./skeletons/LeadByCountryChartSkeleton";
 import { MonthlyGrowthChart } from "./MontlyGrowthChart";
 import { MonthlyGrowthChartSkeleton } from "./skeletons/MonthlyGrowthChartSkeleton";
+import { StaffLeadChart } from "./StaffLeadChart";
 
 interface Props {
   cardsData: CardsData;
@@ -56,25 +39,9 @@ export default function DashboardHome({ cardsData, chartsData }: Props) {
           <MonthlyGrowthChart monthlyData={chartsData.monthlyGrowthData} />
         </Suspense>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-          className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100"
-        >
-          <h3 className="text-xl font-bold text-gray-900 mb-6">
-            Assigned Leads Per Staff
-          </h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={staffAssignmentsData} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis dataKey="name" type="category" width={100} />
-              <Tooltip />
-              <Bar dataKey="leads" fill="#5B2CA5" radius={[0, 8, 8, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </motion.div>
+        <Suspense fallback={<StageChartSkeleton />}>
+          <StaffLeadChart staffLeadData={chartsData.staffAssignmentsData} />
+        </Suspense>
       </div>
 
       <motion.div
@@ -90,7 +57,9 @@ export default function DashboardHome({ cardsData, chartsData }: Props) {
               Overall lead-to-customer conversion
             </p>
             <div className="flex items-baseline gap-2">
-              <span className="text-5xl font-bold">{convrsionRate}%</span>
+              <span className="text-5xl font-bold">
+                {chartsData.convrsionRate}%
+              </span>
               {/* <span className="text-green-300 flex items-center gap-1">
                 <TrendingUp size={20} />
                 +3.2%
