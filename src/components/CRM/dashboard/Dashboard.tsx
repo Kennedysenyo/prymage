@@ -27,6 +27,8 @@ import { StageChart } from "./StageChart";
 import { StageChartSkeleton } from "./skeletons/StageChartSkeleton";
 import { LeadByCountryChart } from "./LeadByCountryChart";
 import { LeadByCountryChartSkeleton } from "./skeletons/LeadByCountryChartSkeleton";
+import { MonthlyGrowthChart } from "./MontlyGrowthChart";
+import { MonthlyGrowthChartSkeleton } from "./skeletons/MonthlyGrowthChartSkeleton";
 
 interface Props {
   cardsData: CardsData;
@@ -39,6 +41,7 @@ export default function DashboardHome({ cardsData, chartsData }: Props) {
       <Suspense fallback={<CardsSkeleton />}>
         <Cards stats={cardsData} />
       </Suspense>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Suspense fallback={<StageChartSkeleton />}>
           <StageChart data={chartsData.leadStageData} />
@@ -49,32 +52,9 @@ export default function DashboardHome({ cardsData, chartsData }: Props) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-          className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100"
-        >
-          <h3 className="text-xl font-bold text-gray-900 mb-6">
-            Monthly Lead Growth
-          </h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={monthlyGrowthData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="leads"
-                stroke="#D4A24C"
-                strokeWidth={3}
-                dot={{ fill: "#D4A24C", r: 6 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </motion.div>
+        <Suspense fallback={<MonthlyGrowthChartSkeleton />}>
+          <MonthlyGrowthChart monthlyData={chartsData.monthlyGrowthData} />
+        </Suspense>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
