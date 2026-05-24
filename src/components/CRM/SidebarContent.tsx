@@ -76,7 +76,8 @@ export const SidebarContent = ({ session }: Props) => {
               <Image
                 src={session?.user?.image ?? "/assets/default-image.png"}
                 alt={session?.user?.name ?? "Note Author"}
-                fill
+                width={40}
+                height={40}
                 loading="eager"
                 className="object-cover object-center"
               />

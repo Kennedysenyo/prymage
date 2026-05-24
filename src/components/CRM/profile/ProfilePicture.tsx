@@ -47,7 +47,8 @@ export const ProfilePicture = ({ image, name, userId }: Props) => {
         <Image
           src={avatar ?? "/assets/default-image.png"}
           alt={name ?? "Note Author"}
-          fill
+          width={96}
+          height={96}
           loading="eager"
           className="object-cover object-center"
         />

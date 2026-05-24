@@ -118,7 +118,8 @@ export function EditUser({ user }: Props) {
             <Image
               src={user.image ?? "/assets/default-image.png"}
               alt={user.name}
-              fill
+              width={64}
+              height={64}
               loading="eager"
               className="object-cover object-center"
             />

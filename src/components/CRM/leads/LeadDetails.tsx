@@ -342,7 +342,8 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
                   <Image
                     src={note.authorImage ?? "/assets/default-image.png"}
                     alt={note.authorName ?? "Note Author"}
-                    fill
+                    width={40}
+                    height={40}
                     loading="eager"
                     className="object-cover object-center"
                   />

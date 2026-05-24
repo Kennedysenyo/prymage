@@ -1,3 +1,4 @@
+import { requireSelfOrPermission } from "@/features/auth/auth.authorize";
 import { user } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/db";
 import { put, del, list } from "@vercel/blob";
@@ -16,6 +17,12 @@ export async function POST(req: Request) {
         { status: 400 },
       );
     }
+
+    requireSelfOrPermission(userId, {
+      resource: "user",
+      own: "update:own",
+      any: "update:any",
+    });
 
     const filename = `avatars/${userId}`;
 

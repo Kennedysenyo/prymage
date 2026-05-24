@@ -121,7 +121,8 @@ export function UserDetails({
               <Image
                 src={user?.image ?? "/assets/default-image.png"}
                 alt={user?.name ?? "Note Author"}
-                fill
+                width={96}
+                height={96}
                 loading="eager"
                 className="object-cover object-center"
               />

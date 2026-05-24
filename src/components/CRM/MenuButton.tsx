@@ -52,7 +52,8 @@ export const MenuButton = ({ user }: Props) => {
           <Image
             src={user?.image ?? "/assets/default-image.png"}
             alt={user?.name ?? "Note Author"}
-            fill
+            width={32}
+            height={32}
             loading="eager"
             className="object-cover object-center"
           />

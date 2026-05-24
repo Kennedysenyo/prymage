@@ -207,7 +207,8 @@ export function AssignStaff({ actionBy, lead, users }: Props) {
                         <Image
                           src={staff.image ?? "/assets/default-image.png"}
                           alt={staff.name ?? "Note Author"}
-                          fill
+                          width={48}
+                          height={48}
                           className="object-cover object-center"
                         />
                       </div>

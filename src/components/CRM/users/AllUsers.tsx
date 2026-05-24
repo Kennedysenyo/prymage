@@ -101,7 +101,8 @@ export function AllUsers({ users }: Props) {
                         <Image
                           src={user?.image ?? "/assets/default-image.png"}
                           alt={user?.name ?? "Note Author"}
-                          fill
+                          width={40}
+                          height={40}
                           loading="eager"
                           className="object-cover object-center"
                         />
@@ -190,7 +191,8 @@ export function AllUsers({ users }: Props) {
                 <Image
                   src={user?.image ?? "/assets/default-image.png"}
                   alt={user?.name ?? "Note Author"}
-                  fill
+                  width={48}
+                  height={48}
                   loading="eager"
                   className="object-cover object-center"
                 />
