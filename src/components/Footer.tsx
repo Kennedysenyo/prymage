@@ -154,7 +154,6 @@ export function Footer() {
               transition={{ delay: 0.5, duration: 0.6 }}
               className="flex gap-4"
             >
-              {/* TODO: Import icons from react-icons and uncomment the following */}
               {[FaFacebookF, FaXTwitter, FaLinkedin, FaInstagram].map(
                 (Icon, index) => (
                   <Link
