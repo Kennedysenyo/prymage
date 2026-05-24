@@ -17,9 +17,10 @@ import { ConversionRateSkeleton } from "./skeletons/ConversionRateSkeleton";
 interface Props {
   cardsData: CardsData;
   chartsData: ChartsData;
+  role: string | null | undefined;
 }
 
-export default function DashboardHome({ cardsData, chartsData }: Props) {
+export default function DashboardHome({ cardsData, chartsData, role }: Props) {
   return (
     <div className="space-y-8">
       <Suspense fallback={<CardsSkeleton />}>
@@ -40,9 +41,11 @@ export default function DashboardHome({ cardsData, chartsData }: Props) {
           <MonthlyGrowthChart monthlyData={chartsData.monthlyGrowthData} />
         </Suspense>
 
-        <Suspense fallback={<StageChartSkeleton />}>
-          <StaffLeadChart staffLeadData={chartsData.staffAssignmentsData} />
-        </Suspense>
+        {role === "admin" && (
+          <Suspense fallback={<StageChartSkeleton />}>
+            <StaffLeadChart staffLeadData={chartsData.staffAssignmentsData} />
+          </Suspense>
+        )}
       </div>
 
       <Suspense fallback={<ConversionRateSkeleton />}>

@@ -26,13 +26,28 @@ export const SidebarContent = ({ session }: Props) => {
   };
 
   const menuItems = [
-    { icon: LayoutDashboard, label: "Dashboard", path: "/admin/dashboard" },
-    { icon: Briefcase, label: "Leads", path: "/admin/leads" },
-    // { icon: FileText, label: "Lead Details", path: "/dashboard/leads/1" },
-    { icon: Users, label: "Users", path: "/admin/users" },
-    { icon: UserPlus, label: "Add User", path: "/admin/users/add" },
-    // { icon: TrendingUp, label: "Analytics", path: "/dashboard/analytics" },
-    // { icon: Settings, label: "Settings", path: "/admin/settings" },
+    {
+      icon: LayoutDashboard,
+      label: "Dashboard",
+      path: "/admin/dashboard",
+      staffFriendly: true,
+    },
+    {
+      icon: Briefcase,
+      label: "Leads",
+      path: "/admin/leads",
+      staffFriendly: true,
+    },
+    // { icon: FileText, label: "Lead Details", path: "/dashboard/leads/1",staffFriendly: true },
+    { icon: Users, label: "Users", path: "/admin/users", staffFriendly: false },
+    {
+      icon: UserPlus,
+      label: "Add User",
+      path: "/admin/users/add",
+      staffFriendly: false,
+    },
+    // { icon: TrendingUp, label: "Analytics", path: "/dashboard/analytics",staffFriendly: false },
+    // { icon: Settings, label: "Settings", path: "/admin/settings",staffFriendly: false },
   ];
   return (
     <div className="h-full flex flex-col bg-[#181225] text-white">
@@ -57,7 +72,7 @@ export const SidebarContent = ({ session }: Props) => {
             href={item.path}
             onClick={onClose}
             className={cn(
-              "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300",
+              `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${session?.user?.role === "staff" && !item.staffFriendly ? "hidden" : ""}`,
               isActive(item.path)
                 ? "bg-gradient-to-r from-[#5B2CA5] to-[#D4A24C] text-white shadow-lg"
                 : "text-white/70 hover:text-white hover:bg-white/10",

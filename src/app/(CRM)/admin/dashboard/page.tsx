@@ -16,5 +16,11 @@ export default async function DashboardHomePage() {
 
   const chartsData = await fetchDashboardChartsData();
 
-  return <DashboardHome cardsData={cardsData} chartsData={chartsData} />;
+  return (
+    <DashboardHome
+      cardsData={cardsData}
+      chartsData={chartsData}
+      role={session?.user.role}
+    />
+  );
 }

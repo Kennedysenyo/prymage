@@ -21,6 +21,16 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/admin/dashboard", request.url));
   }
 
+  if (pathname.startsWith("/admin/users") && session?.user.role === "staff") {
+    const referer = request.headers.get("referer");
+
+    if (referer) {
+      return NextResponse.redirect(referer);
+    }
+
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
   if (!isAuthed && pathname.startsWith("/admin/dashboard")) {
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
