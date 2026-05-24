@@ -157,23 +157,23 @@ export async function getLeadStats(startDate: Date, endDate: Date) {
       totalLeads: sql<number>`count(*)`,
 
       newLeads: sql<number>`
-        count(case when ${leads.stage} = 'New' then 1 end)
+        count(case when ${leads.stage} = 'new' then 1 end)
       `,
 
       contactedLeads: sql<number>`
-        count(case when ${leads.stage} = 'Contacted' then 1 end)
+        count(case when ${leads.stage} = 'contacted' then 1 end)
       `,
 
       qualifiedLeads: sql<number>`
-        count(case when ${leads.stage} = 'Qualified' then 1 end)
+        count(case when ${leads.stage} = 'qualified' then 1 end)
       `,
 
       wonLeads: sql<number>`
-        count(case when ${leads.stage} = 'Won' then 1 end)
+        count(case when ${leads.stage} = 'won' then 1 end)
       `,
 
       lostLeads: sql<number>`
-        count(case when ${leads.stage} = 'Lost' then 1 end)
+        count(case when ${leads.stage} = 'lost' then 1 end)
       `,
     })
     .from(leads)
@@ -186,7 +186,7 @@ const calculateDelta = (
   current: number,
   previous: number,
 ): { change: string; trend: "up" | "down" } => {
-  if (previous === 0) {
+  if (previous == 0) {
     return { change: "0%", trend: "up" };
   }
 

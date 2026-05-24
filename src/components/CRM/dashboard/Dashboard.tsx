@@ -1,5 +1,4 @@
-import { motion } from "motion/react";
-import { Users } from "lucide-react";
+"use client";
 
 import { CardsData, ChartsData } from "@/features/leads/leads.types";
 import { Suspense } from "react";
@@ -32,7 +31,7 @@ export default function DashboardHome({ cardsData, chartsData }: Props) {
           <StageChart data={chartsData.leadStageData} />
         </Suspense>
         <Suspense fallback={<LeadByCountryChartSkeleton />}>
-          <LeadByCountryChart statData={chartsData.staffAssignmentsData} />
+          <LeadByCountryChart statData={chartsData.leadsByCountryData} />
         </Suspense>
       </div>
 

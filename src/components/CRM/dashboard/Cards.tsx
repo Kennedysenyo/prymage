@@ -10,7 +10,6 @@ import {
   UserPlus,
   XCircle,
 } from "lucide-react";
-import { ForwardRefExoticComponent, RefAttributes } from "react";
 import { motion } from "motion/react";
 import { CardsData } from "@/features/leads/leads.types";
 
@@ -78,7 +77,7 @@ export const Cards = ({ stats }: Props) => {
       whileHover={{ y: -5, scale: 1.02 }}
       className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100"
     >
-      <div className="flex items-start justify-center mb-4">
+      <div className="flex items-start justify-between mb-4">
         <div
           className={`w-12 h-12 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center`}
         >
@@ -99,10 +98,8 @@ export const Cards = ({ stats }: Props) => {
           <span className="text-sm font-semibold">{stat.change}</span>
         </div>
       </div>
-      <h3 className="text-3xl font-bold text-gray-900 mb-1 text-center">
-        {stat.value}
-      </h3>
-      <p className="text-gray-600 text-center">{stat.label}</p>
+      <h3 className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</h3>
+      <p className="text-gray-600">{stat.label}</p>
     </motion.div>
   ));
 

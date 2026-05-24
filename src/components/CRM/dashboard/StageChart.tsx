@@ -1,8 +1,7 @@
 "use client";
 
-import { PieChart } from "lucide-react";
 import { motion } from "motion/react";
-import { Pie, ResponsiveContainer, Sector, Tooltip } from "recharts";
+import { Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from "recharts";
 
 interface Props {
   data: {

@@ -12,38 +12,9 @@ export default async function DashboardHomePage() {
     redirect("/sign-in");
   }
 
-  // TODO: Implement streaming
+  const cardsData = await fetchDashboardCardStats();
 
-  const {
-    totalLeads,
-    newLeads,
-    contactedLeads,
-    qualifiedLeads,
-    wonLeads,
-    lostLeads,
-  } = await fetchDashboardCardStats();
+  const chartsData = await fetchDashboardChartsData();
 
-  const {
-    leadStageData,
-    leadsByCountryData,
-    monthlyGrowthData,
-    staffAssignmentsData,
-    convrsionRate,
-  } = await fetchDashboardChartsData();
-
-  return (
-    <DashboardHome
-      totalLeads={totalLeads}
-      newLeads={newLeads}
-      contactedLeads={contactedLeads}
-      qualifiedLeads={qualifiedLeads}
-      wonLeads={wonLeads}
-      lostLeads={lostLeads}
-      leadStageData={leadStageData}
-      leadsByCountryData={leadsByCountryData}
-      monthlyGrowthData={monthlyGrowthData}
-      staffAssignmentsData={staffAssignmentsData}
-      convrsionRate={convrsionRate}
-    />
-  );
+  return <DashboardHome cardsData={cardsData} chartsData={chartsData} />;
 }
