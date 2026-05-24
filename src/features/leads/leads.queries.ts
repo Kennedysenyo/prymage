@@ -55,6 +55,7 @@ export const fetchLeadById = async (id: string) => {
         phone: leads.phone,
         interest: leads.interest,
         country: leads.country,
+        message: leads.message,
         stage: leads.stage,
         assignedUser: user.name,
         assignedTo: leads.assignedTo,

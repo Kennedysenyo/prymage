@@ -16,6 +16,7 @@ import {
   UserPlus,
   Edit,
   Loader2,
+  MessageCircleIcon,
 } from "lucide-react";
 import {
   CreateNoteFormResponseType,
@@ -175,81 +176,108 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Mail size={20} className="text-purple-600" />
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <Mail size={20} className="text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Email</p>
+                  <p className="font-medium text-gray-900">{lead.email}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-gray-500">Email</p>
-                <p className="font-medium text-gray-900">{lead.email}</p>
+
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <Phone size={20} className="text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Phone</p>
+                  <p className="font-medium text-gray-900">{lead.phone}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Building2 size={20} className="text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Company</p>
+                  <p className="font-medium text-gray-900">{lead.company}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                  <MapPin size={20} className="text-yellow-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Country</p>
+                  <p className="font-medium text-gray-900">
+                    {capitalizeWord(lead.country)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                  <Briefcase size={20} className="text-indigo-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Interest</p>
+                  <p className="font-medium text-gray-900">
+                    {capitalizeWord(lead.interest)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+                  <User size={20} className="text-pink-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Assigned Staff</p>
+                  <p className="font-medium text-gray-900">
+                    {lead.assignedUser ?? "None"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                  <Calendar size={20} className="text-orange-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Created Date</p>
+                  <p className="font-medium text-gray-900">
+                    {lead.createdAt.toDateString()}
+                  </p>
+                </div>
               </div>
             </div>
+            <div className="mt-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center shadow-sm">
+                  <MessageCircleIcon size={20} />
+                </div>
 
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <Phone size={20} className="text-green-600" />
+                <div>
+                  <p className="text-sm text-gray-500 font-medium">
+                    Lead Message
+                  </p>
+                  <h4 className="text-lg font-semibold text-gray-900">
+                    Customer Inquiry
+                  </h4>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-gray-500">Phone</p>
-                <p className="font-medium text-gray-900">{lead.phone}</p>
-              </div>
-            </div>
 
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Building2 size={20} className="text-blue-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Company</p>
-                <p className="font-medium text-gray-900">{lead.company}</p>
-              </div>
-            </div>
+              <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-gray-50 to-white p-5 shadow-sm">
+                {/* subtle decorative glow */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-100/40 blur-3xl rounded-full" />
 
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <MapPin size={20} className="text-yellow-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Country</p>
-                <p className="font-medium text-gray-900">
-                  {capitalizeWord(lead.country)}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                <Briefcase size={20} className="text-indigo-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Interest</p>
-                <p className="font-medium text-gray-900">
-                  {capitalizeWord(lead.interest)}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
-                <User size={20} className="text-pink-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Assigned Staff</p>
-                <p className="font-medium text-gray-900">
-                  {lead.assignedUser ?? "None"}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                <Calendar size={20} className="text-orange-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Created Date</p>
-                <p className="font-medium text-gray-900">
-                  {lead.createdAt.toDateString()}
+                <p className="relative text-gray-700 leading-7 whitespace-pre-wrap">
+                  {lead.message}
                 </p>
               </div>
             </div>

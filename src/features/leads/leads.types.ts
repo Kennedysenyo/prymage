@@ -8,6 +8,7 @@ import {
 import {
   fetchDashboardCardStats,
   fetchDashboardChartsData,
+  fetchLeadById,
   fetchLeadToAssignStaffById,
 } from "./leads.queries";
 
@@ -35,19 +36,7 @@ export type LeadsTable = {
   createdAt: Date;
 };
 // export type LeadDetails = z.infer<typeof selectLeadDetailsSchema>;
-export type LeadDetails = {
-  id: string;
-  name: string;
-  company: string;
-  email: string;
-  phone: string;
-  interest: string;
-  country: string;
-  stage: "new" | "contacted" | "qualified" | "won" | "lost";
-  assignedUser: string | null;
-  assignedTo: string | null;
-  createdAt: Date;
-};
+export type LeadDetails = Awaited<ReturnType<typeof fetchLeadById>>;
 
 // ============== Notes
 
