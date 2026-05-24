@@ -22,6 +22,29 @@ import { requireSession } from "../auth/auth.authorize";
 
 export const fetchAllLeads = async () => {
   try {
+    const session = await requireSession();
+
+    if (session?.user?.role === "staff") {
+      const allLeads = await db
+        .select({
+          id: leads.id,
+          name: leads.name,
+          company: leads.company,
+          email: leads.email,
+          interest: leads.interest,
+          country: leads.country,
+          stage: leads.stage,
+          assignedTo: leads.assignedTo,
+          assignedUser: user.name,
+          createdAt: leads.createdAt,
+        })
+        .from(leads)
+        .leftJoin(user, eq(leads.assignedTo, user.id))
+        .where(eq(leads.assignedTo, session?.user?.id))
+        .orderBy(desc(leads.createdAt));
+      return allLeads;
+    }
+
     const allLeads = await db
       .select({
         id: leads.id,
