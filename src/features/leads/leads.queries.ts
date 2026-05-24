@@ -18,6 +18,7 @@ import {
 import { notFound } from "next/navigation";
 import { fetchAllUsers } from "../users/users.queries";
 import { handleError } from "@/lib/utils";
+import { requireSession } from "../auth/auth.authorize";
 
 export const fetchAllLeads = async () => {
   try {
@@ -125,7 +126,38 @@ export const fetchLeadDetailsById = async (id: string) => {
   return { lead, notes, history };
 };
 
-export async function fetchDashboardStats() {
+export async function fetchDashboardStats(staffId?: string) {
+  if (staffId) {
+    const [result] = await db
+      .select({
+        totalLeads: count(),
+
+        newLeads: sql<number>`
+        count(case when ${leads.stage} = 'new' then 1 end)
+      `,
+
+        contactedLeads: sql<number>`
+        count(case when ${leads.stage} = 'contacted' then 1 end)
+      `,
+
+        qualifiedLeads: sql<number>`
+        count(case when ${leads.stage} = 'qualified' then 1 end)
+      `,
+
+        wonLeads: sql<number>`
+        count(case when ${leads.stage} = 'won' then 1 end)
+      `,
+
+        lostLeads: sql<number>`
+        count(case when ${leads.stage} = 'lost' then 1 end)
+      `,
+      })
+      .from(leads)
+      .where(eq(leads.assignedTo, staffId));
+
+    return result;
+  }
+
   const [result] = await db
     .select({
       totalLeads: count(),
@@ -155,7 +187,47 @@ export async function fetchDashboardStats() {
   return result;
 }
 
-export async function getLeadStats(startDate: Date, endDate: Date) {
+export async function getLeadStats(
+  startDate: Date,
+  endDate: Date,
+  staffId?: string,
+) {
+  if (staffId) {
+    const result = await db
+      .select({
+        totalLeads: sql<number>`count(*)`,
+
+        newLeads: sql<number>`
+        count(case when ${leads.stage} = 'new' then 1 end)
+      `,
+
+        contactedLeads: sql<number>`
+        count(case when ${leads.stage} = 'contacted' then 1 end)
+      `,
+
+        qualifiedLeads: sql<number>`
+        count(case when ${leads.stage} = 'qualified' then 1 end)
+      `,
+
+        wonLeads: sql<number>`
+        count(case when ${leads.stage} = 'won' then 1 end)
+      `,
+
+        lostLeads: sql<number>`
+        count(case when ${leads.stage} = 'lost' then 1 end)
+      `,
+      })
+      .from(leads)
+      .where(
+        and(
+          and(gte(leads.createdAt, startDate), lte(leads.createdAt, endDate)),
+          eq(leads.assignedTo, staffId),
+        ),
+      );
+
+    return result[0];
+  }
+
   const result = await db
     .select({
       totalLeads: sql<number>`count(*)`,
@@ -203,18 +275,26 @@ const calculateDelta = (
 };
 
 export const fetchDashboardCardStats = async () => {
+  const session = await requireSession();
+  const user = session?.user;
+
   const now = new Date();
   const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const previousMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
   const previousMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
 
-  const [cardsStats, currentMonthStats, previousMonthStats] = await Promise.all(
-    [
-      fetchDashboardStats(),
-      getLeadStats(currentMonthStart, now),
-      getLeadStats(previousMonthStart, previousMonthEnd),
-    ],
-  );
+  const [cardsStats, currentMonthStats, previousMonthStats] =
+    user?.role === "admin"
+      ? await Promise.all([
+          fetchDashboardStats(),
+          getLeadStats(currentMonthStart, now),
+          getLeadStats(previousMonthStart, previousMonthEnd),
+        ])
+      : await Promise.all([
+          fetchDashboardStats(user.id),
+          getLeadStats(currentMonthStart, now, user.id),
+          getLeadStats(previousMonthStart, previousMonthEnd, user.id),
+        ]);
 
   const keys = Object.keys(cardsStats) as Array<keyof typeof cardsStats>;
 
@@ -240,8 +320,73 @@ export const fetchDashboardCardStats = async () => {
   return finalData;
 };
 
-const fetchLeadsStageData = async () => {
+const fetchLeadsStageData = async (staffId?: string) => {
   try {
+    if (staffId) {
+      const [result] = await db
+        .select({
+          new: sql<number>`
+        COUNT(*) FILTER (
+          WHERE ${leads.stage} = 'new'
+        )
+      `,
+
+          contacted: sql<number>`
+        COUNT(*) FILTER (
+          WHERE ${leads.stage} = 'contacted'
+        )
+      `,
+
+          qualified: sql<number>`
+        COUNT(*) FILTER (
+          WHERE ${leads.stage} = 'qualified'
+        )
+      `,
+
+          won: sql<number>`
+        COUNT(*) FILTER (
+          WHERE ${leads.stage} = 'won'
+        )
+      `,
+
+          lost: sql<number>`
+        COUNT(*) FILTER (
+          WHERE ${leads.stage} = 'lost'
+        )
+      `,
+        })
+
+        .from(leads)
+        .where(eq(leads.assignedTo, staffId));
+
+      return [
+        {
+          name: "New",
+          value: Number(result.new),
+        },
+
+        {
+          name: "Contacted",
+          value: Number(result.contacted),
+        },
+
+        {
+          name: "Qualified",
+          value: Number(result.qualified),
+        },
+
+        {
+          name: "Won",
+          value: Number(result.won),
+        },
+
+        {
+          name: "Lost",
+          value: Number(result.lost),
+        },
+      ];
+    }
+
     const [result] = await db
       .select({
         new: sql<number>`
@@ -308,8 +453,20 @@ const fetchLeadsStageData = async () => {
   }
 };
 
-const fetchLeadsByCountryData = async () => {
+const fetchLeadsByCountryData = async (staffId?: string) => {
   try {
+    if (staffId) {
+      const leadsByCountryData = await db
+        .select({
+          name: leads.country,
+          leads: sql<number>`count(${leads.id})`,
+        })
+        .from(leads)
+        .where(and(isNotNull(leads.country), eq(leads.assignedTo, staffId)))
+        .groupBy(leads.country);
+      return leadsByCountryData;
+    }
+
     const leadsByCountryData = await db
       .select({
         name: leads.country,
@@ -324,8 +481,20 @@ const fetchLeadsByCountryData = async () => {
   }
 };
 
-const fetchMonthlyGrowthData = async () => {
+const fetchMonthlyGrowthData = async (staffId?: string) => {
   try {
+    if (staffId) {
+      const monthlyGrowthData = await db
+        .select({
+          month: sql<string>`to_char(date_trunc('month', ${leads.createdAt}), 'Mon')`,
+          leads: sql<number>`count(${leads.id})`,
+        })
+        .from(leads)
+        .where(eq(leads.assignedTo, staffId))
+        .groupBy(sql`date_trunc('month', ${leads.createdAt})`)
+        .orderBy(sql`date_trunc('month', ${leads.createdAt})`);
+      return monthlyGrowthData;
+    }
     const monthlyGrowthData = await db
       .select({
         month: sql<string>`to_char(date_trunc('month', ${leads.createdAt}), 'Mon')`,
@@ -340,8 +509,22 @@ const fetchMonthlyGrowthData = async () => {
   }
 };
 
-const fetchStaffAssignmentsData = async () => {
+const fetchStaffAssignmentsData = async (staffId?: string) => {
   try {
+    if (staffId) {
+      const staffAssignmentsData = await db
+        .select({
+          name: user.name,
+          leads: sql<number>`count(${leads.id})`,
+        })
+        .from(leads)
+        .innerJoin(user, sql`${leads.assignedTo} = ${user.id}`)
+        .where(eq(leads.assignedTo, staffId))
+        .groupBy(user.name)
+        .orderBy(sql`count(${leads.id}) desc`);
+      return staffAssignmentsData;
+    }
+
     const staffAssignmentsData = await db
       .select({
         name: user.name,
@@ -357,16 +540,30 @@ const fetchStaffAssignmentsData = async () => {
   }
 };
 
-const fetchConversionRate = async () => {
-  const convrsionRate = await db
-    .select({
-      total: sql<number>`count(*)`,
-      converted: sql<number>`count(case when ${leads.stage} = 'won' then 1 end)`,
-    })
-    .from(leads);
+const fetchConversionRate = async (staffId?: string) => {
+  let total: number = 0;
+  let converted: number = 0;
+  if (staffId) {
+    const convrsionRate = await db
+      .select({
+        total: sql<number>`count(*)`,
+        converted: sql<number>`count(case when ${leads.stage} = 'won' then 1 end)`,
+      })
+      .from(leads)
+      .where(eq(leads.assignedTo, staffId));
+    total = Number(convrsionRate[0]?.total ?? 0);
+    converted = Number(convrsionRate[0]?.converted ?? 0);
+  } else {
+    const convrsionRate = await db
+      .select({
+        total: sql<number>`count(*)`,
+        converted: sql<number>`count(case when ${leads.stage} = 'won' then 1 end)`,
+      })
+      .from(leads);
 
-  const total = Number(convrsionRate[0]?.total ?? 0);
-  const converted = Number(convrsionRate[0]?.converted ?? 0);
+    total = Number(convrsionRate[0]?.total ?? 0);
+    converted = Number(convrsionRate[0]?.converted ?? 0);
+  }
 
   const rate = total > 0 ? (converted / total) * 100 : 0;
 
@@ -379,19 +576,31 @@ const fetchConversionRate = async () => {
 };
 
 export const fetchDashboardChartsData = async () => {
+  const session = await requireSession();
+  const user = session?.user;
+
   const [
     leadStageData,
     leadsByCountryData,
     monthlyGrowthData,
     staffAssignmentsData,
     convrsionRate,
-  ] = await Promise.all([
-    fetchLeadsStageData(),
-    fetchLeadsByCountryData(),
-    fetchMonthlyGrowthData(),
-    fetchStaffAssignmentsData(),
-    fetchConversionRate(),
-  ]);
+  ] =
+    user.role === "admin"
+      ? await Promise.all([
+          fetchLeadsStageData(),
+          fetchLeadsByCountryData(),
+          fetchMonthlyGrowthData(),
+          fetchStaffAssignmentsData(),
+          fetchConversionRate(),
+        ])
+      : await Promise.all([
+          fetchLeadsStageData(user.id),
+          fetchLeadsByCountryData(user.id),
+          fetchMonthlyGrowthData(user.id),
+          fetchStaffAssignmentsData(user.id),
+          fetchConversionRate(user.id),
+        ]);
   return {
     leadStageData,
     leadsByCountryData,
