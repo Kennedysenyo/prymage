@@ -9,6 +9,7 @@ import Link from "next/link";
 import { capitalizeWord } from "@/lib/utils";
 import { DeleteButton } from "../DeleteButton";
 import { deleteUserById } from "@/features/users/users.service";
+import Image from "next/image";
 
 interface User {
   id: string;
@@ -96,11 +97,13 @@ export function AllUsers({ users }: Props) {
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white font-semibold">
-                        <img
-                          className="w-full h-full rounded-full"
-                          src={user.image ?? "/assets/default-image.png"}
-                          alt={user.name ?? "Note Author"}
+                      <div className="relative w-10 h-10 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white overflow-hidden font-semibold">
+                        <Image
+                          src={user?.image ?? "/assets/default-image.png"}
+                          alt={user?.name ?? "Note Author"}
+                          fill
+                          loading="eager"
+                          className="object-cover object-center"
                         />
                       </div>
                       <span className="font-medium text-gray-900">
@@ -183,11 +186,13 @@ export function AllUsers({ users }: Props) {
             className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100"
           >
             <div className="flex items-center gap-4 mb-4">
-              <div className="shrink-0 w-12 h-12 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white font-semibold">
-                <img
-                  className="w-full h-full rounded-full"
-                  src={user.image ?? "/assets/default-image.png"}
-                  alt={user.name ?? "Note Author"}
+              <div className="relative shrink-0 w-12 h-12 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full overflow-hidden flex items-center justify-center text-white font-semibold">
+                <Image
+                  src={user?.image ?? "/assets/default-image.png"}
+                  alt={user?.name ?? "Note Author"}
+                  fill
+                  loading="eager"
+                  className="object-cover object-center"
                 />
               </div>
               <div className="flex-1  truncate">

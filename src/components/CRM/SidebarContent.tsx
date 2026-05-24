@@ -7,6 +7,7 @@ import { useSidarState } from "@/hooks/useSidebarState";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { SessionType } from "@/types/global";
+import Image from "next/image";
 
 interface Props {
   session: SessionType;
@@ -71,11 +72,13 @@ export const SidebarContent = ({ session }: Props) => {
       <div className="p-4 border-t border-white/10">
         <div className="bg-white/10 rounded-xl p-4 mb-3 backdrop-blur-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center">
-              <img
-                className="w-full h-full rounded-full"
+            <div className="w-10 h-10 relative overflow-hidden bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center">
+              <Image
                 src={session?.user?.image ?? "/assets/default-image.png"}
                 alt={session?.user?.name ?? "Note Author"}
+                fill
+                loading="eager"
+                className="object-cover object-center"
               />
             </div>
             <div className="flex-1 min-w-0">

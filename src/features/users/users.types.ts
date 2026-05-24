@@ -5,7 +5,11 @@ import {
   editUserSchema,
   profileInsertSchema,
 } from "./users.schemas";
-import { fetchAllUsers, fetchUserProfileData } from "./users.queries";
+import {
+  fetchAllUsers,
+  fetchUserById,
+  fetchUserProfileData,
+} from "./users.queries";
 import { fetchUserMonthlyPerformance } from "../leads/leads.queries";
 
 // ---------Create User
@@ -31,6 +35,8 @@ export type EditUserFormResponseType = {
   errors: EditUserFormFieldErrors;
   errorMessage: string | null;
 };
+
+export type FetchedUserDataForEdit = Awaited<ReturnType<typeof fetchUserById>>;
 
 // ------------Profile Data
 

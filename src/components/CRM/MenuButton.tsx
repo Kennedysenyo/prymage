@@ -3,6 +3,7 @@
 import { logOut } from "@/features/auth/auth.service";
 import { cn } from "@/lib/utils";
 import { ChevronDown, Loader2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import toast from "react-hot-toast";
@@ -47,11 +48,13 @@ export const MenuButton = ({ user }: Props) => {
         onClick={() => setShowUserMenu(!showUserMenu)}
         className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition-colors"
       >
-        <div className="w-8 h-8 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center">
-          <img
-            className="w-full h-full rounded-full"
+        <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C]">
+          <Image
             src={user?.image ?? "/assets/default-image.png"}
             alt={user?.name ?? "Note Author"}
+            fill
+            loading="eager"
+            className="object-cover object-center"
           />
         </div>
         <ChevronDown size={16} className="hidden sm:block" />

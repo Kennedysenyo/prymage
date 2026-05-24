@@ -2,6 +2,7 @@
 
 import { handleError } from "@/lib/utils";
 import { Camera } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -42,16 +43,16 @@ export const ProfilePicture = ({ image, name, userId }: Props) => {
 
   return (
     <div className="relative w-24 h-24">
-      {/* Avatar */}
-      <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white/30 bg-white/20">
-        <img
+      <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-white/30 bg-white/20">
+        <Image
           src={avatar ?? "/assets/default-image.png"}
-          alt={name ?? "User"}
-          className="w-full h-full object-cover"
+          alt={name ?? "Note Author"}
+          fill
+          loading="eager"
+          className="object-cover object-center"
         />
       </div>
 
-      {/* Hidden input */}
       <input
         id="avatar-upload"
         type="file"
@@ -63,7 +64,6 @@ export const ProfilePicture = ({ image, name, userId }: Props) => {
         }}
       />
 
-      {/* Button */}
       <label
         htmlFor="avatar-upload"
         className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#5B2CA5] shadow-lg cursor-pointer hover:scale-110 transition-transform"

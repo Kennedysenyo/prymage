@@ -31,6 +31,7 @@ import {
 import Link from "next/link";
 import { fecthUserDetailsData } from "@/features/users/users.queries";
 import { capitalizeWord } from "@/lib/utils";
+import Image from "next/image";
 type UserDetailsDataType = Awaited<ReturnType<typeof fecthUserDetailsData>>;
 interface Props extends UserDetailsDataType {}
 
@@ -116,11 +117,13 @@ export function UserDetails({
           className="lg:col-span-1 bg-white rounded-2xl p-8 shadow-lg border border-gray-100 h-fit"
         >
           <div className="text-center mb-6">
-            <div className="w-24 h-24 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4">
-              <img
-                className="w-full h-full rounded-full"
-                src={user.image ?? "/assets/default-image.png"}
-                alt={user.name ?? "Note Author"}
+            <div className="w-24 h-24 relative bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4 overflow-hidden">
+              <Image
+                src={user?.image ?? "/assets/default-image.png"}
+                alt={user?.name ?? "Note Author"}
+                fill
+                loading="eager"
+                className="object-cover object-center"
               />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-1">

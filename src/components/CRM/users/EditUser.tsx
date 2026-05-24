@@ -24,26 +24,23 @@ import {
 } from "lucide-react";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import Link from "next/link";
-import { EditUserFormResponseType } from "@/features/users/users.types";
+import {
+  EditUserFormResponseType,
+  FetchedUserDataForEdit,
+} from "@/features/users/users.types";
 import {
   toggleUserBan,
   validateEditUserForm,
 } from "@/features/users/users.service";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface Props {
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    position: string;
-    role: "admin" | "staff";
-    banned: boolean;
-  };
+  user: FetchedUserDataForEdit;
 }
 
-type UserType = Omit<Props["user"], "id" | "banned">;
+type UserType = Omit<FetchedUserDataForEdit, "id" | "banned" | "image">;
 
 interface FormFields extends UserType {
   password?: string;
@@ -117,8 +114,14 @@ export function EditUser({ user }: Props) {
         className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100"
       >
         <div className="flex items-center gap-4 mb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white text-2xl font-bold">
-            JD
+          <div className="w-16 h-16 relative  overflow-hidden bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white text-2xl font-bold">
+            <Image
+              src={user.image ?? "/assets/default-image.png"}
+              alt={user.name}
+              fill
+              loading="eager"
+              className="object-cover object-center"
+            />
           </div>
           <div>
             <h2 className="text-3xl font-bold text-gray-900">Edit User</h2>

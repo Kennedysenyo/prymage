@@ -25,6 +25,7 @@ import {
 } from "@/features/leads/leads.service";
 import { capitalizeWord, cn } from "@/lib/utils";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 interface Note {
   id: string;
@@ -337,11 +338,13 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
                 transition={{ delay: index * 0.1, duration: 0.3 }}
                 className="flex gap-3"
               >
-                <div className="w-10 h-10 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
-                  <img
-                    className="w-full h-full rounded-full"
+                <div className="w-10 h-10 relative bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
+                  <Image
                     src={note.authorImage ?? "/assets/default-image.png"}
                     alt={note.authorName ?? "Note Author"}
+                    fill
+                    loading="eager"
+                    className="object-cover object-center"
                   />
                 </div>
                 <div className="flex-1">

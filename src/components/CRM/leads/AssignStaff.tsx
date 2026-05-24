@@ -19,6 +19,7 @@ import toast from "react-hot-toast";
 
 import { AssignStaffUsers } from "@/features/users/users.types";
 import { AssignStaffLead } from "@/features/leads/leads.types";
+import Image from "next/image";
 
 interface Props {
   actionBy: string;
@@ -203,10 +204,11 @@ export function AssignStaff({ actionBy, lead, users }: Props) {
 
                     <div className="flex items-start gap-4">
                       <div className="w-12 h-12 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
-                        <img
-                          className="w-full h-full rounded-full"
+                        <Image
                           src={staff.image ?? "/assets/default-image.png"}
                           alt={staff.name ?? "Note Author"}
+                          fill
+                          className="object-cover object-center"
                         />
                       </div>
 
