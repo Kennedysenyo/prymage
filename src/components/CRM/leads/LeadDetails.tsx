@@ -11,10 +11,6 @@ import {
   User,
   Briefcase,
   Clock,
-  CheckCircle,
-  MessageSquare,
-  UserPlus,
-  Edit,
   Loader2,
   MessageCircleIcon,
 } from "lucide-react";

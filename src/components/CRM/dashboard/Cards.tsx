@@ -3,7 +3,6 @@
 import {
   Briefcase,
   CheckCircle,
-  LucideProps,
   Phone,
   TrendingDown,
   TrendingUp,

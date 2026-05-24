@@ -30,7 +30,7 @@ export function Footer() {
     "Training",
   ];
 
-  const industries = ["Manufacturing", "Retail", "Healthcare", "Education"];
+  // const industries = ["Manufacturing", "Retail", "Healthcare", "Education"];
 
   return (
     <footer className="bg-[#181225] text-white pt-16 pb-8">

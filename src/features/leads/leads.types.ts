@@ -1,10 +1,5 @@
 import z from "zod";
-import {
-  createLeadsSchema,
-  createNoteSchema,
-  selectAllLeadsTableSchema,
-  selectLeadDetailsSchema,
-} from "./leads.schemas";
+import { createLeadsSchema, createNoteSchema } from "./leads.schemas";
 import {
   fetchDashboardCardStats,
   fetchDashboardChartsData,

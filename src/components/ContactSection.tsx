@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { MapPin, Phone, Mail, Clock, Loader, Loader2 } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Loader2 } from "lucide-react";
 import { ChangeEvent, useActionState, useEffect, useState } from "react";
 import {
   CreateLeadsDataType,

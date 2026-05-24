@@ -1,7 +1,7 @@
 "use client";
 
 import { SidebarContext } from "@/contexts/SidebarContext";
-import { ReactNode, useContext, useState } from "react";
+import { ReactNode, useState } from "react";
 
 export const SidebarProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);

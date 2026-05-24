@@ -20,7 +20,6 @@ import { user } from "@/lib/db/auth-schema";
 import {
   requirePermission,
   requireSelfOrPermission,
-  requireSession,
 } from "../auth/auth.authorize";
 import { sendEmail } from "../emails/emails.service";
 import { fetchAdminEmails } from "../users/users.queries";
@@ -192,13 +191,6 @@ export const updateStage = async ({
   newStage: Stage;
 }): Promise<string | null> => {
   try {
-    const session = await requireSession();
-
-    // TODO: This makes only assigned staff to update stage but also affects admin.
-    // if (assignedTo !== session.user.id) {
-    //   throw new Error("Forbidden");
-    // }
-
     if (assignedTo) {
       await requireSelfOrPermission(assignedTo, {
         resource: "lead",

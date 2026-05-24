@@ -4,7 +4,7 @@ import { user } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/db";
 import { leads, leadStageHistory } from "@/lib/db/schema";
 import { handleError } from "@/lib/utils";
-import { and, count, desc, eq, sql } from "drizzle-orm";
+import { count, desc, eq, sql } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import {
   fetchAssignedLeadsById,
@@ -97,6 +97,7 @@ export const fetchUserDetailsById = async (id: string) => {
       .where(eq(user.id, id));
     return userDetails;
   } catch (error) {
+    console.error(error);
     notFound();
   }
 };
@@ -193,6 +194,7 @@ export const fetchUserProfileData = async (id: string) => {
 
     return data;
   } catch (error) {
+    console.error(error);
     notFound();
   }
 };

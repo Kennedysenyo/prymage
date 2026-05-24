@@ -16,7 +16,6 @@ import {
   User,
   Mail,
   Shield,
-  Trash2,
   AlertTriangle,
   Briefcase,
   Loader2,

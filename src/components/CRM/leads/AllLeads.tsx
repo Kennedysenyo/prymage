@@ -5,11 +5,8 @@ import { useState } from "react";
 
 import {
   Search,
-  Filter,
   MoreVertical,
   Eye,
-  Edit,
-  Trash2,
   UserPlus,
   ChevronLeft,
   ChevronRight,

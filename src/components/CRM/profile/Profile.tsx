@@ -9,11 +9,9 @@ import {
   Lock,
   Eye,
   EyeOff,
-  Camera,
   Bell,
   Shield,
   Save,
-  CheckCircle,
   Briefcase,
   Calendar,
   TrendingUp,
@@ -132,18 +130,6 @@ export function Profile({ user, monthlyPerformance }: Props) {
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="bg-gradient-to-r from-[#5B2CA5] to-[#D4A24C] rounded-2xl p-8 shadow-lg text-white">
         <div className="flex flex-col md:flex-row items-center gap-6">
-          <div className="relative">
-            <div className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white text-3xl font-bold border-4 border-white/30">
-              <img
-                className="w-full h-full rounded-full"
-                src={user.image ?? "/assets/default-image.png"}
-                alt={user.name ?? "User"}
-              />
-            </div>
-            <button className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#5B2CA5] hover:scale-110 transition-transform shadow-lg">
-              <Camera size={16} />
-            </button>
-          </div>
           <div className="flex-1 text-center md:text-left">
             <h1 className="text-3xl font-bold mb-2">{user.name}</h1>
             <p className="text-white/90 mb-1">{user.email}</p>

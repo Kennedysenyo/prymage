@@ -1,5 +1,5 @@
 import { Section, Text } from "react-email";
-import { BaseEmailProps, brand, EmailLayout } from "../BaseEmail";
+import { brand, EmailLayout } from "../BaseEmail";
 
 interface PasswordChangedEmailProps {
   supportEmail: string;

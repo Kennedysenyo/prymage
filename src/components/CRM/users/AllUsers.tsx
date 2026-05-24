@@ -3,14 +3,7 @@
 import { motion } from "motion/react";
 import { useState } from "react";
 
-import {
-  Search,
-  MoreVertical,
-  Eye,
-  Edit,
-  Trash2,
-  UserPlus,
-} from "lucide-react";
+import { Search, MoreVertical, Eye, Edit, UserPlus } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
 import { capitalizeWord } from "@/lib/utils";

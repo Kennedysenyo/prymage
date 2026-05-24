@@ -13,7 +13,6 @@ import {
   isNotNull,
   lte,
   ne,
-  or,
   sql,
 } from "drizzle-orm";
 import { notFound } from "next/navigation";
@@ -40,6 +39,7 @@ export const fetchAllLeads = async () => {
       .orderBy(desc(leads.createdAt));
     return allLeads;
   } catch (e) {
+    console.error(e);
     throw new Error("Error Fetching posts");
   }
 };
@@ -67,6 +67,7 @@ export const fetchLeadById = async (id: string) => {
 
     return lead;
   } catch (e) {
+    console.error(e);
     notFound();
   }
 };
@@ -88,6 +89,7 @@ export const fetchNotesByLeadId = async (id: string) => {
 
     return notes;
   } catch (e) {
+    console.error(e);
     notFound();
   }
 };
@@ -109,6 +111,7 @@ export const fetchHistoryByLeadId = async (id: string) => {
 
     return history;
   } catch (e) {
+    console.error(e);
     notFound();
   }
 };
@@ -420,6 +423,7 @@ export const fetchLeadToAssignStaffById = async (id: string) => {
 
     return lead;
   } catch (e) {
+    console.error(e);
     notFound();
   }
 };

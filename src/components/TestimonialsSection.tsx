@@ -40,8 +40,6 @@ export function TestimonialsSection() {
     },
   ];
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-
   return (
     <section
       id="testimonials"
