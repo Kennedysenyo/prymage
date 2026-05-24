@@ -109,7 +109,11 @@ export const validateLeadsForm = async (
 
 const addNote = async (data: CreateNoteDataType): Promise<string | null> => {
   try {
-    await requirePermission({ lead: ["comment"] });
+    await requireSelfOrPermission(data.userId, {
+      resource: "lead",
+      own: "comment:own",
+      any: "comment:any",
+    });
 
     await db.transaction(async (tx) => {
       const [history] = await tx
