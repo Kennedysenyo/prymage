@@ -16,7 +16,7 @@ import Link from "next/link";
 import { capitalizeWord } from "@/lib/utils";
 import { assignStaff } from "@/features/leads/leads.service";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+
 import { AssignStaffUsers } from "@/features/users/users.types";
 import { AssignStaffLead } from "@/features/leads/leads.types";
 
@@ -30,7 +30,6 @@ export function AssignStaff({ actionBy, lead, users }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStaff, setSelectedStaff] = useState(lead.assignedTo);
   const [pending, startTransition] = useTransition();
-  const router = useRouter();
 
   const filteredStaff = users.filter(
     (staff) =>

@@ -1,25 +1,79 @@
+"use client";
+
+import { handleError } from "@/lib/utils";
 import { Camera } from "lucide-react";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 interface Props {
-  image: string;
-  name: string;
+  image: string | null;
+  name: string | null;
+  userId: string;
 }
-export const ProfilePicture = ({ image, name }: Props) => {
+
+export const ProfilePicture = ({ image, name, userId }: Props) => {
+  const [loading, setLoading] = useState(false);
+  const [avatar, setAvatar] = useState<string | null>(image);
+
+  const handleUpload = async (file: File) => {
+    try {
+      setLoading(true);
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("userId", userId);
+
+      const res = await fetch("/api/upload-avatar", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error);
+
+      setAvatar(data.url);
+    } catch (err) {
+      toast.error(handleError(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="relative">
-      <div className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white text-3xl font-bold border-4 border-white/30">
+    <div className="relative w-24 h-24">
+      {/* Avatar */}
+      <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white/30 bg-white/20">
         <img
-          className="w-full h-full rounded-full"
-          src={image ?? "/assets/default-image.png"}
+          src={avatar ?? "/assets/default-image.png"}
           alt={name ?? "User"}
+          className="w-full h-full object-cover"
         />
       </div>
+
+      {/* Hidden input */}
       <input
+        id="avatar-upload"
         type="file"
-        className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#5B2CA5] hover:scale-110 transition-transform shadow-lg"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) handleUpload(file);
+        }}
+      />
+
+      {/* Button */}
+      <label
+        htmlFor="avatar-upload"
+        className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#5B2CA5] shadow-lg cursor-pointer hover:scale-110 transition-transform"
       >
-        <Camera size={16} />
-      </input>
+        {loading ? (
+          <div className="w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+        ) : (
+          <Camera size={16} />
+        )}
+      </label>
     </div>
   );
 };

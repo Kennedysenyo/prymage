@@ -40,6 +40,7 @@ import {
   validateProfileForm,
 } from "@/features/users/users.service";
 import toast from "react-hot-toast";
+import { ProfilePicture } from "./ProfilePicture";
 
 interface Props {
   user: UserProfileData;
@@ -130,6 +131,11 @@ export function Profile({ user, monthlyPerformance }: Props) {
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="bg-gradient-to-r from-[#5B2CA5] to-[#D4A24C] rounded-2xl p-8 shadow-lg text-white">
         <div className="flex flex-col md:flex-row items-center gap-6">
+          <ProfilePicture
+            image={user.image}
+            name={user.name}
+            userId={user.id}
+          />
           <div className="flex-1 text-center md:text-left">
             <h1 className="text-3xl font-bold mb-2">{user.name}</h1>
             <p className="text-white/90 mb-1">{user.email}</p>

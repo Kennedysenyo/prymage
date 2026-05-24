@@ -2,7 +2,6 @@
 
 import { motion } from "motion/react";
 import { Quote, Star } from "lucide-react";
-import { useState } from "react";
 
 export function TestimonialsSection() {
   const testimonials = [

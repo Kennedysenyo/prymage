@@ -57,9 +57,9 @@ export function EditUser({ user }: Props) {
     password: "",
   });
 
-  const handleDelete = () => {
-    setShowDeleteDialog(false);
-  };
+  // const handleDelete = () => {
+  //   setShowDeleteDialog(false);
+  // };
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>,
