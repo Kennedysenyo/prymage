@@ -33,7 +33,7 @@ export const ProfilePicture = ({ image, name, userId }: Props) => {
 
       if (!res.ok) throw new Error(data.error);
 
-      setAvatar(data.url);
+      setAvatar(URL.createObjectURL(file));
     } catch (err) {
       toast.error(handleError(err));
     } finally {

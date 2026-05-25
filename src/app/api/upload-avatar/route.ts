@@ -40,7 +40,10 @@ export async function POST(req: Request) {
       allowOverwrite: true,
     });
 
-    await db.update(user).set({ image: blob.url }).where(eq(user.id, userId));
+    await db
+      .update(user)
+      .set({ image: `${blob.url}?updated=${new Date()}` })
+      .where(eq(user.id, userId));
     revalidatePath("/admin/profile");
 
     return Response.json(
