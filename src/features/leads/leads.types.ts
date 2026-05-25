@@ -3,9 +3,13 @@ import { createLeadsSchema, createNoteSchema } from "./leads.schemas";
 import {
   fetchDashboardCardStats,
   fetchDashboardChartsData,
+  fetchHistoryByLeadId,
   fetchLeadById,
   fetchLeadToAssignStaffById,
+  fetchNotesByLeadId,
 } from "./leads.queries";
+import { ForwardRefExoticComponent, RefAttributes } from "react";
+import { LucideProps } from "lucide-react";
 
 export type CreateLeadsDataType = z.infer<typeof createLeadsSchema>;
 
@@ -33,8 +37,12 @@ export type LeadsTable = {
 // export type LeadDetails = z.infer<typeof selectLeadDetailsSchema>;
 export type LeadDetails = Awaited<ReturnType<typeof fetchLeadById>>;
 
-// ============== Notes
+export type History = Awaited<ReturnType<typeof fetchHistoryByLeadId>>;
 
+export type SingleHistory = History[number];
+
+// ============== Notes
+export type Notes = Awaited<ReturnType<typeof fetchNotesByLeadId>>;
 export type CreateNoteDataType = z.infer<typeof createNoteSchema>;
 
 export type CreateNoteFormFieldErrors = Partial<CreateNoteDataType>;

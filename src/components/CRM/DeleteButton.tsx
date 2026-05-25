@@ -50,7 +50,7 @@ export function DeleteButton({ resource, id, deleteServerAction }: Props) {
           cursor-pointer outline-none justify-center lg:justify-start
         "
       >
-        <Trash2 size={16} />
+        <Trash2 size={16} className="hidden lg:inline-block" />
         {`Delete ${capitalizeWord(resource)}`}
       </button>
 

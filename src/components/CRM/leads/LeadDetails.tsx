@@ -1,14 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import {
-  ForwardRefExoticComponent,
-  RefAttributes,
-  useActionState,
-  useEffect,
-  useState,
-  useTransition,
-} from "react";
+import { useActionState, useEffect, useState, useTransition } from "react";
 import {
   Mail,
   Phone,
@@ -20,40 +13,21 @@ import {
   Clock,
   Loader2,
   MessageCircleIcon,
-  UserPlus,
-  LucideProps,
-  Edit,
-  CheckCircle,
 } from "lucide-react";
 import {
   CreateNoteFormResponseType,
   LeadDetails as Details,
+  History,
+  Notes,
   Stage,
 } from "@/features/leads/leads.types";
 import {
   updateStage,
   validateCreateNoteForm,
 } from "@/features/leads/leads.service";
-import { capitalizeWord, cn } from "@/lib/utils";
+import { addHistoryIcons, capitalizeWord, cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 import Image from "next/image";
-import {
-  fetchHistoryByLeadId,
-  fetchNotesByLeadId,
-} from "@/features/leads/leads.queries";
-
-type Notes = Awaited<ReturnType<typeof fetchNotesByLeadId>>;
-
-type History = Awaited<ReturnType<typeof fetchHistoryByLeadId>>;
-
-type SingleHistory = History[number];
-
-interface HistoryType extends SingleHistory {
-  icon: ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
-  >;
-  color: string;
-}
 
 interface Props {
   userId: string;
@@ -112,21 +86,6 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
     validateCreateNoteForm.bind(null, { userId, leadId }),
     initialState,
   );
-
-  const addHistoryIcons = (history: History[number]): HistoryType => {
-    switch (history.activity) {
-      case "Lead Created":
-        return { ...history, icon: UserPlus, color: "text-green-600" };
-      case "Assigned Staff":
-        return { ...history, icon: User, color: "text-purple-600" };
-      case "Note Added":
-        return { ...history, icon: Edit, color: "text-blue-600" };
-      case "Stage Changed":
-        return { ...history, icon: CheckCircle, color: "text-yellow-600" };
-      default:
-        throw new Error("Unknown activity!");
-    }
-  };
 
   useEffect(() => {
     if (state.success) {

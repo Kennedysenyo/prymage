@@ -30,7 +30,7 @@ import {
 } from "recharts";
 import Link from "next/link";
 import { fecthUserDetailsData } from "@/features/users/users.queries";
-import { capitalizeWord } from "@/lib/utils";
+import { addHistoryIcons, capitalizeWord } from "@/lib/utils";
 import Image from "next/image";
 type UserDetailsDataType = Awaited<ReturnType<typeof fecthUserDetailsData>>;
 interface Props extends UserDetailsDataType {}
@@ -363,33 +363,35 @@ export function UserDetails({
               Recent Activity
             </h3>
             <div className="space-y-4">
-              {userActivities.map((activity, index) => (
-                <motion.div
-                  key={activity.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05, duration: 0.3 }}
-                  className="flex gap-4"
-                >
-                  <div
-                    className={`w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0 `}
+              {userActivities
+                .map((hist) => addHistoryIcons(hist))
+                .map((activity, index) => (
+                  <motion.div
+                    key={activity.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05, duration: 0.3 }}
+                    className="flex gap-4"
                   >
-                    {/* <activity.icon size={20} /> */}
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-gray-900">
-                      {activity.activity}
-                    </h4>
-                    <p className="text-sm text-gray-600">
-                      {activity.description}
-                    </p>
-                    <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
-                      <Clock size={12} />
-                      {activity.createdAt.toLocaleDateString()}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
+                    <div
+                      className={`w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0 ${activity.color} `}
+                    >
+                      <activity.icon size={20} />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900">
+                        {activity.activity}
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        {activity.description}
+                      </p>
+                      <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
+                        <Clock size={12} />
+                        {activity.createdAt.toLocaleDateString()}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
             </div>
           </motion.div>
         </div>
