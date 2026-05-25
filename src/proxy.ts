@@ -21,7 +21,11 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/admin/dashboard", request.url));
   }
 
-  if (pathname.startsWith("/admin/users") && session?.user.role === "staff") {
+  if (
+    (pathname.startsWith("/admin/users") ||
+      pathname.endsWith("/assign-staff")) &&
+    session?.user.role === "staff"
+  ) {
     const referer = request.headers.get("referer");
 
     if (referer) {

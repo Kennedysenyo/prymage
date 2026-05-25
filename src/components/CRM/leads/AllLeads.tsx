@@ -17,12 +17,14 @@ import { LeadsTable } from "@/features/leads/leads.types";
 import { capitalizeWord } from "@/lib/utils";
 import { DeleteButton } from "../DeleteButton";
 import { deleteLeadById } from "@/features/leads/leads.service";
+import { SessionType } from "@/types/global";
 
 interface Props {
   leads: LeadsTable[];
+  session: SessionType;
 }
 
-export function AllLeads({ leads }: Props) {
+export function AllLeads({ leads, session }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [stageFilter, setStageFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -186,21 +188,25 @@ export function AllLeads({ leads }: Props) {
                               Edit Lead
                             </Link>
                           </DropdownMenu.Item> */}
-                          <DropdownMenu.Item className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer outline-none">
-                            <Link
-                              href={`/admin/leads/${lead.id}/assign-staff`}
-                              className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer outline-none"
-                            >
-                              <UserPlus size={16} />
-                              Assign Staff
-                            </Link>
-                          </DropdownMenu.Item>
-                          <DropdownMenu.Separator className="h-px bg-gray-200 my-1" />
-                          <DeleteButton
-                            resource="lead"
-                            id={lead.id}
-                            deleteServerAction={deleteLeadById}
-                          />
+                          {session?.user.role === "admin" && (
+                            <>
+                              <DropdownMenu.Item className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer outline-none">
+                                <Link
+                                  href={`/admin/leads/${lead.id}/assign-staff`}
+                                  className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer outline-none"
+                                >
+                                  <UserPlus size={16} />
+                                  Assign Staff
+                                </Link>
+                              </DropdownMenu.Item>
+                              <DropdownMenu.Separator className="h-px bg-gray-200 my-1" />
+                              <DeleteButton
+                                resource="lead"
+                                id={lead.id}
+                                deleteServerAction={deleteLeadById}
+                              />
+                            </>
+                          )}
                         </DropdownMenu.Content>
                       </DropdownMenu.Portal>
                     </DropdownMenu.Root>

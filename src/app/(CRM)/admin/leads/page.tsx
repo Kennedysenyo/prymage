@@ -10,5 +10,5 @@ export default async function LeadsPage() {
   }
 
   const leads = await fetchAllLeads();
-  return <AllLeads leads={leads} />;
+  return <AllLeads leads={leads} session={session} />;
 }
