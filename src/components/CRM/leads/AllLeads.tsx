@@ -170,10 +170,10 @@ export function AllLeads({ leads, session }: Props) {
                           className="bg-white rounded-xl shadow-lg border border-gray-200 py-2 w-48 z-50"
                           sideOffset={5}
                         >
-                          <DropdownMenu.Item asChild>
+                          <DropdownMenu.Item>
                             <Link
                               href={`/admin/leads/${lead.id}/details`}
-                              className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer outline-none"
+                              className="flex  items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer outline-none"
                             >
                               <Eye size={16} />
                               View Lead
@@ -190,7 +190,7 @@ export function AllLeads({ leads, session }: Props) {
                           </DropdownMenu.Item> */}
                           {session?.user.role === "admin" && (
                             <>
-                              <DropdownMenu.Item className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer outline-none">
+                              <DropdownMenu.Item>
                                 <Link
                                   href={`/admin/leads/${lead.id}/assign-staff`}
                                   className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer outline-none"
@@ -200,11 +200,14 @@ export function AllLeads({ leads, session }: Props) {
                                 </Link>
                               </DropdownMenu.Item>
                               <DropdownMenu.Separator className="h-px bg-gray-200 my-1" />
-                              <DeleteButton
-                                resource="lead"
-                                id={lead.id}
-                                deleteServerAction={deleteLeadById}
-                              />
+
+                              <DropdownMenu.Item>
+                                <DeleteButton
+                                  resource="lead"
+                                  id={lead.id}
+                                  deleteServerAction={deleteLeadById}
+                                />
+                              </DropdownMenu.Item>
                             </>
                           )}
                         </DropdownMenu.Content>
@@ -265,6 +268,23 @@ export function AllLeads({ leads, session }: Props) {
             >
               View Details
             </Link>
+            {session?.user.role === "admin" && (
+              <div className="flex flex-wrap items-center gap-2">
+                <Link
+                  href={`/admin/leads/${lead.id}/assign-staff`}
+                  className="mt-4 flex-1 text-center px-4 py-2 bg-gray-100 text-gray-700  rounded-lg hover:shadow-lg transition-all"
+                >
+                  Assign Staff
+                </Link>
+                <span className="flex-1 mt-4   rounded-lg hover:shadow-lg transition-all">
+                  <DeleteButton
+                    resource="lead"
+                    id={lead.id}
+                    deleteServerAction={deleteLeadById}
+                  />
+                </span>
+              </div>
+            )}
           </motion.div>
         ))}
       </div>

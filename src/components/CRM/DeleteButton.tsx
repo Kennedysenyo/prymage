@@ -37,21 +37,22 @@ export function DeleteButton({ resource, id, deleteServerAction }: Props) {
     <>
       {/* DROPDOWN ITEM */}
 
-      <DropdownMenu.Item
-        onSelect={(e) => {
-          e.preventDefault();
+      <button
+        onClick={(e) => {
+          // e.preventDefault();
 
           setOpen(true);
         }}
         className="
+        w-full rounded-lg 
           flex items-center gap-3 px-4 py-2
           text-red-600 hover:bg-red-50
-          cursor-pointer outline-none
+          cursor-pointer outline-none justify-center lg:justify-start
         "
       >
         <Trash2 size={16} />
         {`Delete ${capitalizeWord(resource)}`}
-      </DropdownMenu.Item>
+      </button>
 
       {/* DIALOG */}
 

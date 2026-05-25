@@ -221,19 +221,26 @@ export function AllUsers({ users }: Props) {
                 {user.createdAt.toDateString()}
               </p>
             </div>
-            <div className="flex gap-2">
+            <Link
+              href={`/admin/leads/${user.id}/details`}
+              className="mt-4 block w-full text-center px-4 py-2 bg-gradient-to-r from-[#5B2CA5] to-[#D4A24C] text-white rounded-lg hover:shadow-lg transition-all"
+            >
+              View
+            </Link>
+            <div className="flex flex-wrap gap-2">
               <Link
                 href={`/admin/users/${user.id}/details`}
-                className="flex-1 text-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                className="mt-4 flex-1 text-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
               >
                 View
               </Link>
-              <Link
-                href={`/admin/users/${user.id}/edit`}
-                className="flex-1 text-center px-4 py-2 bg-gradient-to-r from-[#5B2CA5] to-[#D4A24C] text-white rounded-lg hover:shadow-lg transition-all"
-              >
-                Edit
-              </Link>
+              <span className="flex-1 mt-4">
+                <DeleteButton
+                  resource="user"
+                  id={user.id}
+                  deleteServerAction={deleteUserById}
+                />
+              </span>
             </div>
           </motion.div>
         ))}
