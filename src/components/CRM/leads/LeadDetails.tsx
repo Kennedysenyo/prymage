@@ -338,7 +338,7 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
                 transition={{ delay: index * 0.1, duration: 0.3 }}
                 className="flex gap-3"
               >
-                <div className="w-10 h-10 relative bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
+                <div className="w-10 h-10 overflow-hidden relative bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
                   <Image
                     src={note.authorImage ?? "/assets/default-image.png"}
                     alt={note.authorName ?? "Note Author"}

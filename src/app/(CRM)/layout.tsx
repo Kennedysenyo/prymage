@@ -2,12 +2,16 @@ import { DashboardNavbar } from "@/components/CRM/DashboardNavbar";
 import { Sidebar } from "@/components/CRM/Sidebar";
 import { getSession } from "@/lib/better-auth/auth-helpers";
 import { SidebarProvider } from "@/providers/SidebarProvider";
+import { redirect } from "next/navigation";
 import { ReactNode } from "react";
 
 export default async function CRMLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
   const session = await getSession();
+  if (!session?.user) {
+    redirect("/sign-in");
+  }
 
   return (
     <div className="min-h-screen bg-[#f7f7fa] ">
