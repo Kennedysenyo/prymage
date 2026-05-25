@@ -22,7 +22,6 @@ import {
   MessageCircleIcon,
   UserPlus,
   LucideProps,
-  MessageSquare,
   Edit,
   CheckCircle,
 } from "lucide-react";
