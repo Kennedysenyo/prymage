@@ -124,6 +124,7 @@ export const fetchHistoryByLeadId = async (id: string) => {
       .select({
         id: leadStageHistory.id,
         activity: leadStageHistory.activity,
+        actionBy: user.name,
         description: leadStageHistory.description,
         oldStage: leadStageHistory.oldStage,
         newStage: leadStageHistory.newStage,
@@ -131,7 +132,8 @@ export const fetchHistoryByLeadId = async (id: string) => {
       })
       .from(leadStageHistory)
       .leftJoin(user, eq(leadStageHistory.actionBy, user.id))
-      .where(eq(leadStageHistory.leadId, id));
+      .where(eq(leadStageHistory.leadId, id))
+      .orderBy(desc(leadStageHistory.createdAt));
 
     return history;
   } catch (e) {

@@ -409,7 +409,7 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
                   className="flex gap-4 relative"
                 >
                   {index < history.length - 1 && (
-                    <div className="absolute left-5 top-10 bottom-0 w-px bg-gray-200" />
+                    <div className="absolute left-5 top-14 -bottom-6 w-px bg-gray-200" />
                   )}
                   <div
                     className={`w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0 ${event.color}`}
@@ -420,6 +420,9 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
                     <h4 className="font-semibold text-gray-900 mb-1">
                       {event.activity}
                     </h4>
+                    <p className="text-sm text-gray-600 mb-1 font-semibold">
+                      {event.actionBy}
+                    </p>
                     <p className="text-sm text-gray-600 mb-1">
                       {event.description}
                     </p>
