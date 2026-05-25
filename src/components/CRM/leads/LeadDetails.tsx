@@ -1,7 +1,14 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useActionState, useEffect, useState, useTransition } from "react";
+import {
+  ForwardRefExoticComponent,
+  RefAttributes,
+  useActionState,
+  useEffect,
+  useState,
+  useTransition,
+} from "react";
 import {
   Mail,
   Phone,
@@ -13,6 +20,11 @@ import {
   Clock,
   Loader2,
   MessageCircleIcon,
+  UserPlus,
+  LucideProps,
+  MessageSquare,
+  Edit,
+  CheckCircle,
 } from "lucide-react";
 import {
   CreateNoteFormResponseType,
@@ -26,30 +38,30 @@ import {
 import { capitalizeWord, cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import {
+  fetchHistoryByLeadId,
+  fetchNotesByLeadId,
+} from "@/features/leads/leads.queries";
 
-interface Note {
-  id: string;
-  authorName: string | null;
-  authorImage: string | null;
-  content: string;
-  createdAt: Date;
-}
+type Notes = Awaited<ReturnType<typeof fetchNotesByLeadId>>;
 
-interface History {
-  id: string;
-  activity: "Lead Created" | "Stage Changed" | "Note Added" | "Assigned Staff";
-  description: string;
-  newStage: Stage;
-  createdAt: Date;
-  oldStage?: Stage | null;
+type History = Awaited<ReturnType<typeof fetchHistoryByLeadId>>;
+
+type SingleHistory = History[number];
+
+interface HistoryType extends SingleHistory {
+  icon: ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
+  >;
+  color: string;
 }
 
 interface Props {
   userId: string;
   leadId: string;
   lead: Details;
-  notes: Note[];
-  history: History[];
+  notes: Notes;
+  history: History;
 }
 
 export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
@@ -102,40 +114,20 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
     initialState,
   );
 
-  // const timeline = [
-  //   {
-  //     id: 1,
-  //     icon: UserPlus,
-  //     label: "Lead Created",
-  //     description: "Lead added to CRM",
-  //     timestamp: "2024-05-12 9:00 AM",
-  //     color: "text-green-600",
-  //   },
-  //   {
-  //     id: 2,
-  //     icon: MessageSquare,
-  //     label: "Stage Changed",
-  //     description: "New → Contacted",
-  //     timestamp: "2024-05-14 10:30 AM",
-  //     color: "text-purple-600",
-  //   },
-  //   {
-  //     id: 3,
-  //     icon: Edit,
-  //     label: "Note Added",
-  //     description: "Follow-up call completed",
-  //     timestamp: "2024-05-15 2:45 PM",
-  //     color: "text-blue-600",
-  //   },
-  //   {
-  //     id: 4,
-  //     icon: CheckCircle,
-  //     label: "Stage Changed",
-  //     description: "Contacted → Qualified",
-  //     timestamp: "2024-05-16 9:00 AM",
-  //     color: "text-yellow-600",
-  //   },
-  // ];
+  const addHistoryIcons = (history: History[number]): HistoryType => {
+    switch (history.activity) {
+      case "Lead Created":
+        return { ...history, icon: UserPlus, color: "text-green-600" };
+      case "Assigned Staff":
+        return { ...history, icon: User, color: "text-purple-600" };
+      case "Note Added":
+        return { ...history, icon: Edit, color: "text-blue-600" };
+      case "Stage Changed":
+        return { ...history, icon: CheckCircle, color: "text-yellow-600" };
+      default:
+        throw new Error("Unknown activity!");
+    }
+  };
 
   useEffect(() => {
     if (state.success) {
@@ -407,36 +399,38 @@ export function LeadDetails({ userId, leadId, lead, notes, history }: Props) {
           </h3>
 
           <div className="space-y-6">
-            {history.map((event, index) => (
-              <motion.div
-                key={event.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.3 }}
-                className="flex gap-4 relative"
-              >
-                {index < history.length - 1 && (
-                  <div className="absolute left-5 top-10 bottom-0 w-px bg-gray-200" />
-                )}
-                <div
-                  className={`w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0 ${""}`}
+            {history
+              .map((hist) => addHistoryIcons(hist))
+              .map((event, index) => (
+                <motion.div
+                  key={event.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1, duration: 0.3 }}
+                  className="flex gap-4 relative"
                 >
-                  {/* <event.icon size={20} /> */}
-                </div>
-                <div className="flex-1 pb-6">
-                  <h4 className="font-semibold text-gray-900 mb-1">
-                    {event.activity}
-                  </h4>
-                  <p className="text-sm text-gray-600 mb-1">
-                    {event.description}
-                  </p>
-                  <p className="text-xs text-gray-500 flex items-center gap-1">
-                    <Clock size={12} />
-                    {event.createdAt.toLocaleDateString()}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
+                  {index < history.length - 1 && (
+                    <div className="absolute left-5 top-10 bottom-0 w-px bg-gray-200" />
+                  )}
+                  <div
+                    className={`w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0 ${event.color}`}
+                  >
+                    <event.icon size={20} />
+                  </div>
+                  <div className="flex-1 pb-6">
+                    <h4 className="font-semibold text-gray-900 mb-1">
+                      {event.activity}
+                    </h4>
+                    <p className="text-sm text-gray-600 mb-1">
+                      {event.description}
+                    </p>
+                    <p className="text-xs text-gray-500 flex items-center gap-1">
+                      <Clock size={12} />
+                      {event.createdAt.toLocaleDateString()}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
           </div>
         </motion.div>
       </div>
