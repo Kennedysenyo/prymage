@@ -203,7 +203,7 @@ export function AssignStaff({ actionBy, lead, users }: Props) {
                     )}
 
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
+                      <div className="w-12 h-12 overflow-hidden bg-gradient-to-br from-[#5B2CA5] to-[#D4A24C] rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
                         <Image
                           src={staff.image ?? "/assets/default-image.png"}
                           alt={staff.name ?? "Note Author"}
