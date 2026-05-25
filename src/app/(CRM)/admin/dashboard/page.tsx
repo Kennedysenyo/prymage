@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 
 export default async function DashboardHomePage() {
   const session = await getSession();
-  if (!session?.user) {
+  if (!session) {
     redirect("/sign-in");
   }
 
