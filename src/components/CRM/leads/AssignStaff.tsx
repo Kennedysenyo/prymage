@@ -140,11 +140,19 @@ export function AssignStaff({ actionBy, lead, users }: Props) {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-gray-200">
-              <p className="text-sm text-gray-500 mb-2">Stage</p>
-              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium">
-                {lead.stage.charAt(0).toUpperCase() + lead.stage.slice(1)}
+            <div className="pt-4 border-t border-gray-200 flex items-center justify-between">
+              <span>
+                <p className="text-sm text-gray-500 mb-2">Stage</p>
+                <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium">
+                  {lead.stage.charAt(0).toUpperCase() + lead.stage.slice(1)}
+                </span>
               </span>
+              <Link
+                href={`/admin/leads/${lead.id}/details`}
+                className="px-6 py-3 rouded-lg bg-gradient-to-r from-[#5B2CA5] to-[#D4A24C] text-white rounded-xl hover:shadow-lg transition-all"
+              >
+                View Lead
+              </Link>
             </div>
           </div>
         </motion.div>

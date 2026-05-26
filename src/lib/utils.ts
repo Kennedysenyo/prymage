@@ -1,4 +1,4 @@
-import { History, SingleHistory } from "@/features/leads/leads.types";
+import { SingleHistory } from "@/features/leads/leads.types";
 import { clsx, type ClassValue } from "clsx";
 import { CheckCircle, Edit, LucideProps, User, UserPlus } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
